@@ -24,6 +24,9 @@ public:
 	static int getReferCount( void * structure,
 		SP_DPMetaStruct_t * metaStruct, SP_DPMetaField_t * field );
 
+	static int setReferCount( void * structure,
+		SP_DPMetaStruct_t * metaStruct, SP_DPMetaField_t * field, int referCount );
+
 private:
 	SP_DPMetaUtils();
 };

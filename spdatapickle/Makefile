@@ -18,7 +18,7 @@ LDFLAGS += -L../spxml/ -lspxml
 
 LIBOBJS = spdpbase64.o spdpmetainfo.o spdpalloc.o spdpmetautils.o spxmlpickle.o
 
-TARGET =  libspdatapickle.so \
+TARGET =  libspdatapickle.so libspdatapickle.a \
 		spxml2struct testaddrbook
 
 #--------------------------------------------------------------------
@@ -28,15 +28,18 @@ all: $(TARGET)
 libspdatapickle.so: $(LIBOBJS)
 	$(LINKER) $(SOFLAGS) $^ -o $@
 
+libspdatapickle.a: $(LIBOBJS)
+	$(AR) $@ $^
+
 spxml2struct: spxml2struct.o spdpxml.o spdpsyntax.o spdpname.o spdpcode.o
 	$(LINKER) $(LDFLAGS) $^ -L. -lspdatapickle -o $@
 
-testaddrbook: xyzaddrbook.o testaddrbook.o
-	$(LINKER) $(LDFLAGS) $^ -L. -lspdatapickle -o $@
+testaddrbook: dp_xyzaddrbook.o testaddrbook.o
+	$(LINKER) $(LDFLAGS) $^ -static -L. -lspdatapickle -lspxml -lstdc++ -o $@
 
-xyzaddrbook.o: xyzaddrbook.cpp
+dp_xyzaddrbook.o: dp_xyzaddrbook.cpp
 
-xyzaddrbook.cpp: addrbook.xml
+dp_xyzaddrbook.cpp: addrbook.xml
 	@(LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):../spxml/; ./spxml2struct addrbook.xml)
 
 clean:

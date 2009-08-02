@@ -21,7 +21,7 @@ SP_DPNameRender :: ~SP_DPNameRender()
 
 const char * SP_DPNameRender :: getFileName( const char * filename, char * name, int size )
 {
-	snprintf( name, size, "%s%s", mPrefix, filename );
+	snprintf( name, size, "dp_%s%s", mPrefix, filename );
 	toLower( name );
 
 	return name;

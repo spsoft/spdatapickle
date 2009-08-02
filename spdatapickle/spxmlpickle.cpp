@@ -46,6 +46,10 @@ int SP_XmlPickle :: pickle( void * structure, int size, int type, SP_XmlStringBu
 	for( int i = 0; i < metaStruct->mFieldCount; i++ ) {
 		SP_DPMetaField_t * field = metaStruct->mFieldList + i;
 
+		// skip null pointer
+		if( field->mIsPtr && ( field->mArraySize <= 0 )
+				&& ( NULL == *(void**) ( base + field->mOffset ) ) ) continue;
+
 		buffer->append( '<' );
 		buffer->append( field->mName );
 		buffer->append( ">" );
@@ -231,7 +235,7 @@ int SP_XmlPickle :: unpickle( SP_XmlElementNode * root, int type, void * structu
 
 	SP_DPMetaStruct_t * metaStruct = SP_DPMetaUtils::find( mMetaInfo, type );
 
-	if( NULL == metaStruct ) return -1;
+	if( NULL == metaStruct || NULL == root ) return -1;
 
 	if( metaStruct->mSize != size ) return -1;
 
@@ -242,20 +246,37 @@ int SP_XmlPickle :: unpickle( SP_XmlElementNode * root, int type, void * structu
 	SP_XmlHandle rootHandle( root );
 
 	// unpickle the non-ptr base type, maybe include referCount
-	for( int i = 0; i < metaStruct->mFieldCount; i++ ) {
+	for( int i = 0; 0 == ret && i < metaStruct->mFieldCount; i++ ) {
 		SP_DPMetaField_t * field = metaStruct->mFieldList + i;
 
 		SP_XmlHandle fieldHandle = rootHandle.getChild( field->mName );
 
 		if( field->mType < eTypeSPDPUserDefine && 0 == field->mIsPtr ) {
+			if( NULL == fieldHandle.toNode() ) {
+				if( field->mIsRequired ) ret = -1;
+				continue;
+			}
+
 			unpickleBaseType( fieldHandle.toElement(), metaStruct, field, structure );
 		}
 	}
 
-	for( int i = 0; i < metaStruct->mFieldCount; i++ ) {
+	for( int i = 0; 0 == ret && i < metaStruct->mFieldCount; i++ ) {
 		SP_DPMetaField_t * field = metaStruct->mFieldList + i;
 
+		// these fields had been unpickled, skip
+		if( field->mType < eTypeSPDPUserDefine && 0 == field->mIsPtr ) continue;
+
 		SP_XmlHandle fieldHandle = rootHandle.getChild( field->mName );
+
+		if( NULL == fieldHandle.toNode() ) {
+			if( field->mIsRequired && ( 0 == field->mIsPtr || field->mArraySize > 0 ) ) {
+				ret = -1;
+			}
+
+			SP_DPMetaUtils::setReferCount( structure, metaStruct, field, 0 );
+			continue;
+		}
 
 		if( field->mType > eTypeSPDPUserDefine ) {
 			if( field->mIsPtr ) {
@@ -264,17 +285,17 @@ int SP_XmlPickle :: unpickle( SP_XmlElementNode * root, int type, void * structu
 				char * referBase = (char*)malloc( referCount * field->mItemSize );
 				*(void**)(base + field->mOffset) = referBase;
 
-				for( int j = 0; j < referCount; j++ ) {
+				for( int j = 0; 0 == ret && j < referCount; j++ ) {
 					SP_XmlHandle itemHandle = fieldHandle.getChild( referStruct->mName, j );
 
-					unpickle( itemHandle.toElement(), field->mType,
+					ret = unpickle( itemHandle.toElement(), field->mType,
 							referBase + ( j * referStruct->mSize ), field->mItemSize );
 				}
 			} else {
-				unpickle( fieldHandle.toElement(), field->mType, base + field->mOffset, field->mItemSize );
+				ret = unpickle( fieldHandle.toElement(), field->mType, base + field->mOffset, field->mItemSize );
 			}
 		} else {
-			unpickleBaseType( fieldHandle.toElement(), metaStruct, field, structure );
+			ret = unpickleBaseType( fieldHandle.toElement(), metaStruct, field, structure );
 		}
 	}
 

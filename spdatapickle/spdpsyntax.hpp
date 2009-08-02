@@ -27,6 +27,9 @@ public:
 	SP_DPSyntaxField();
 	~SP_DPSyntaxField();
 
+	void setId( int id );
+	int getId();
+
 	void setType( const char * type );
 	const char * getType() const;
 
@@ -38,10 +41,15 @@ public:
 	void setReferTo( const char * referTo );
 	const char * getReferTo() const;
 
+	void setRequired( int isRequired );
+	int  isRequired();
+
 private:
+	int mId;
 	char mType[ 128 ];
 	int mArraySize;
 	char mReferTo[ 128 ];
+	int mIsRequired;
 };
 
 typedef std::vector<SP_DPSyntaxField> SP_DPSyntaxFieldVector;

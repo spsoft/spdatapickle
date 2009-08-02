@@ -19,7 +19,7 @@
 		<field name="ImageBuffer" type="*char" referto="ImageSize" />
 
 		<field name="EmailList"  type="*Email" referto="EmailCount" />
-		<field name="EmailCount" type="int32" />
+		<field name="EmailCount" type="int32" required="0" />
 
 		<field name="PhoneCount" type="int32" />
 		<field name="PhoneList" type="*PhoneNumber" referto="PhoneCount" />
