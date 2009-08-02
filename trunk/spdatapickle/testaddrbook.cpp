@@ -57,10 +57,10 @@ void initContact( XYZContact_t * contact )
 	memset( contact, 0, sizeof( *contact ) );
 
 	contact->mName = strdup( "foobar" );
-	contact->mImageSize = 10;
-	contact->mImageBuffer = (char*)malloc( contact->mImageSize );
-	for( int i = 0; i < contact->mImageSize; i++ ) {
-		contact->mImageBuffer[ i ] = i;
+	contact->mImage.mSize = 10;
+	contact->mImage.mBuffer = (char*)malloc( contact->mImage.mSize );
+	for( int i = 0; i < contact->mImage.mSize; i++ ) {
+		contact->mImage.mBuffer[ i ] = i;
 	}
 
 	contact->mEmailCount = 2;
@@ -129,10 +129,10 @@ void testUnpickle( SP_DataPickle * pickle )
 	}
 
 	printf( "name %s\n", contact.mName );
-	printf( "image.size %d\n", contact.mImageSize );
+	printf( "image.size %d\n", contact.mImage.mSize );
 	printf( "image.buffer: " );
-	for( int i = 0; i < contact.mImageSize; i++ ) {
-		printf( "%d ", contact.mImageBuffer[i] );
+	for( int i = 0; i < contact.mImage.mSize; i++ ) {
+		printf( "%d ", contact.mImage.mBuffer[i] );
 	}
 	printf( "\n" );
 
