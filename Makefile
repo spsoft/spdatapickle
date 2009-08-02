@@ -2,13 +2,14 @@
 #--------------------------------------------------------------------
 
 ifeq ($(origin version), undefined)
-	version = 0.1
+	version = 0.2
 endif
 
 #--------------------------------------------------------------------
 
 all:
 	@( cd spxml; make )
+	@( cd spjson; make )
 	@( cd spdatapickle; make )
 
 dist: clean spdatapickle-$(version).src.tar.gz
@@ -22,4 +23,5 @@ spdatapickle-$(version).src.tar.gz:
 clean:
 	@( cd spdatapickle; make clean )
 	@( cd spxml;  make clean )
+	@( cd spjson;  make clean )
 
