@@ -13,10 +13,11 @@ RM = /bin/rm -f
 
 #--------------------------------------------------------------------
 
-CFLAGS += -I../spxml/
-LDFLAGS += -L../spxml/ -lspxml
+CFLAGS += -I../
+LDFLAGS += -L../spxml/ -lspxml -L../spjson/ -lspjson
 
-LIBOBJS = spdpbase64.o spdpmetainfo.o spdpalloc.o spdpmetautils.o spxmlpickle.o
+LIBOBJS = spdpbase64.o spdpmetainfo.o spdpalloc.o spdpmetautils.o \
+		spdatapickle.o spxmlpickle.o spjsonpickle.o
 
 TARGET =  libspdatapickle.so libspdatapickle.a \
 		spxml2struct testaddrbook
@@ -35,7 +36,7 @@ spxml2struct: spxml2struct.o spdpxml.o spdpsyntax.o spdpname.o spdpcode.o
 	$(LINKER) $(LDFLAGS) $^ -L. -lspdatapickle -o $@
 
 testaddrbook: dp_xyzaddrbook.o testaddrbook.o
-	$(LINKER) $(LDFLAGS) $^ -static -L. -lspdatapickle -lspxml -lstdc++ -o $@
+	$(LINKER) $(LDFLAGS) $^ -static -L. -lspdatapickle -lspxml -lspjson -lstdc++ -lm -o $@
 
 dp_xyzaddrbook.o: dp_xyzaddrbook.cpp
 

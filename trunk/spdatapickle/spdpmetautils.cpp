@@ -38,6 +38,8 @@ void SP_DPMetaUtils :: dump( SP_DPMetaInfo_t * metaInfo )
 				field->mArraySize, field->mReferTo );
 		}
 	}
+
+	printf( "\n" );
 }
 
 SP_DPMetaStruct_t * SP_DPMetaUtils :: find( SP_DPMetaInfo_t * metaInfo, int type )

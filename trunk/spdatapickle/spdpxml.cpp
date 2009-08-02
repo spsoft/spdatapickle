@@ -13,10 +13,10 @@
 
 #include "spdpsyntax.hpp"
 
-#include "spdomparser.hpp"
-#include "spdomiterator.hpp"
-#include "spxmlnode.hpp"
-#include "spxmlhandle.hpp"
+#include "spxml/spdomparser.hpp"
+#include "spxml/spdomiterator.hpp"
+#include "spxml/spxmlnode.hpp"
+#include "spxml/spxmlhandle.hpp"
 
 int SP_DPXmlUtils :: parse( const char * xmlFile, SP_DPSyntaxTree * syntaxTree )
 {

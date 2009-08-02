@@ -6,22 +6,20 @@
 #ifndef __spxmlpickle_hpp__
 #define __spxmlpickle_hpp__
 
+#include "spdatapickle.hpp"
+
 class SP_XmlStringBuffer;
 class SP_XmlElementNode;
 
-typedef struct tagSP_DPMetaInfo   SP_DPMetaInfo_t;
-typedef struct tagSP_DPMetaField  SP_DPMetaField_t;
-typedef struct tagSP_DPMetaStruct SP_DPMetaStruct_t;
-
-class SP_XmlPickle
+class SP_XmlPickle : public SP_DataPickle
 {
 public:
 	SP_XmlPickle( SP_DPMetaInfo_t * metaInfo );
 	~SP_XmlPickle();
 
-	int pickle( void * structure, int size, int type, SP_XmlStringBuffer * buffer );
+	virtual int pickle( void * structure, int size, int type, SP_XmlStringBuffer * buffer );
 
-	int unpickle( const char * xml, int len, int type, void * structure, int size );
+	virtual int unpickle( const char * xml, int len, int type, void * structure, int size );
 
 private:
 
@@ -40,9 +38,6 @@ private:
 	int pickleBasePtr( void * ptr, int type, SP_XmlStringBuffer * buffer );
 
 	const char * getTypeTag( int type );
-
-private:
-	SP_DPMetaInfo_t * mMetaInfo;
 };
 
 #endif
