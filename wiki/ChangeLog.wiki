@@ -1,0 +1,12 @@
+#ChangeLog
+
+{{{
+
+Changes in version 0.2 (08.02.2009)
+-------------------------------------
+* Json pickle was added
+
+Changes in version 0.1 (01.19.2009)
+-------------------------------------
+* version 0.1 release
+}}}
