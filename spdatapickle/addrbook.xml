@@ -10,13 +10,18 @@
 	<struct name="Email">
 		<field name="Type"    type="char" arraysize="10" />
 		<field name="Address" type="*char" />
+		<field name="Nickname" type="*char" required="0" />
+	</struct>
+
+	<struct name="Buffer">
+		<field name="Size" type="int32" />
+		<field name="Buffer" type="*char" referto="Size" />
 	</struct>
 
 	<struct name="Contact">
 		<field name="Name"   type="*char" />
 
-		<field name="ImageSize" type="int32" />
-		<field name="ImageBuffer" type="*char" referto="ImageSize" />
+		<field name="Image" type="Buffer" />
 
 		<field name="EmailList"  type="*Email" referto="EmailCount" />
 		<field name="EmailCount" type="int32" required="0" />
