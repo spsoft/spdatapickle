@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "xyzaddrbook.hpp"
+#include "dp_xyzaddrbook.hpp"
 
 #include "spdpmetautils.hpp"
 #include "spxmlpickle.hpp"
@@ -112,10 +112,20 @@ void testUnpickle()
 	SP_XmlPickle pickle( gXYZAddrbookMetaInfo );
 	pickle.pickle( &org, sizeof( org ), eTypeXYZContact, &buffer );
 
+	printf( "%s\n", buffer.getBuffer() );
+
 	XYZContact_t contact;
 	memset( &contact, 0, sizeof( contact ) );
 
-	pickle.unpickle( buffer.getBuffer(), buffer.getSize(), eTypeXYZContact, &contact, sizeof( contact ) );
+	int ret = pickle.unpickle( buffer.getBuffer(), buffer.getSize(),
+			eTypeXYZContact, &contact, sizeof( contact ) );
+
+	printf( "Unpickle %d\n\n", ret );
+
+	if( 0 != ret ) {
+		printf( "Unpickle fail\n" );
+		return;
+	}
 
 	printf( "name %s\n", contact.mName );
 	printf( "image.size %d\n", contact.mImageSize );
@@ -150,9 +160,7 @@ int main( int argc, char * argv[] )
 
 	//testEmail();
 	//testPhoneNumber();
-
-	testContact();
-
+	//testContact();
 	testUnpickle();
 
 	return 0;

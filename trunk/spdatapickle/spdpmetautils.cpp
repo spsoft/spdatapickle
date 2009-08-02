@@ -33,8 +33,8 @@ void SP_DPMetaUtils :: dump( SP_DPMetaInfo_t * metaInfo )
 				//tmp, field->mOffset, field->mFieldSize, field->mItemSize, field->mType, field->mIsPtr,
 				//field->mArraySize, field->mReferTo );
 
-			printf( "field name %-15s offset %d, type %d, isptr %d, array.size %d, referto [%s]\n",
-				tmp, field->mOffset, field->mFieldSize, field->mIsPtr,
+			printf( "field name %-15s offset %d, type %d, isptr %d, isreq %d, array.size %d, referto [%s]\n",
+				tmp, field->mOffset, field->mFieldSize, field->mIsPtr, field->mIsRequired,
 				field->mArraySize, field->mReferTo );
 		}
 	}
@@ -112,6 +112,39 @@ int SP_DPMetaUtils :: getReferCount( void * structure,
 			break;
 		case eTypeSPDPInt32:
 			ret = *(int*)ptr;
+			break;
+		default:
+			ret = -1;
+			break;
+	}
+
+	return ret;
+}
+
+int SP_DPMetaUtils :: setReferCount( void * structure, SP_DPMetaStruct_t * metaStruct,
+		SP_DPMetaField_t * field, int referCount )
+{
+	int ret = 0;
+
+	SP_DPMetaField_t * referTo = SP_DPMetaUtils::find( metaStruct, field->mReferTo );
+
+	if( NULL == referTo ) return -1;
+
+	char * base = (char*)structure;
+	void * ptr = base + referTo->mOffset;
+
+	switch( referTo->mType ) {
+		case eTypeSPDPChar:
+			*(char*)ptr = referCount;
+			break;
+		case eTypeSPDPInt16:
+			*(short*)ptr = referCount;
+			break;
+		case eTypeSPDPUint16:
+			*(unsigned short*)ptr = referCount;
+			break;
+		case eTypeSPDPInt32:
+			*(int*)ptr = referCount;
 			break;
 		default:
 			ret = -1;

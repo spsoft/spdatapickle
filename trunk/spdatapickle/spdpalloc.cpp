@@ -34,6 +34,10 @@ int SP_DPAlloc :: free( void * structure, int size, int type )
 	for( int i = 0; i < metaStruct->mFieldCount; i++ ) {
 		SP_DPMetaField_t * field = metaStruct->mFieldList + i;
 
+		// skip null pointer
+		if( field->mIsPtr && ( field->mArraySize <= 0 )
+				&& ( NULL == *(void**) ( base + field->mOffset ) ) ) continue;
+
 		if( field->mType > eTypeSPDPUserDefine ) {
 			if( field->mIsPtr ) {
 				int referCount = SP_DPMetaUtils::getReferCount( structure, metaStruct, field );

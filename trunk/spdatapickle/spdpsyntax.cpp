@@ -33,6 +33,9 @@ const char * SP_DPSyntaxNode :: getName() const
 
 SP_DPSyntaxField :: SP_DPSyntaxField()
 {
+	mId = 0;
+	mIsRequired = 1;
+
 	SP_DP_MEMSET(mType);
 	SP_DP_MEMSET(mReferTo);
 	mArraySize = 0;
@@ -40,6 +43,16 @@ SP_DPSyntaxField :: SP_DPSyntaxField()
 
 SP_DPSyntaxField :: ~SP_DPSyntaxField()
 {
+}
+
+void SP_DPSyntaxField :: setId( int id )
+{
+	mId = id;
+}
+
+int SP_DPSyntaxField :: getId()
+{
+	return mId;
 }
 
 void SP_DPSyntaxField :: setType( const char * type )
@@ -75,6 +88,16 @@ void SP_DPSyntaxField :: setReferTo( const char * referTo )
 const char * SP_DPSyntaxField :: getReferTo() const
 {
 	return mReferTo;
+}
+
+void SP_DPSyntaxField :: setRequired( int isRequired )
+{
+	mIsRequired = isRequired;
+}
+
+int  SP_DPSyntaxField :: isRequired()
+{
+	return mIsRequired;
 }
 
 //=========================================================

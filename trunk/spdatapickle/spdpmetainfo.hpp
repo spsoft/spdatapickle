@@ -34,10 +34,14 @@ enum {
 #define SP_DP_ARRAY_SIZE(array)        ((int)(sizeof(array)/sizeof(array[0])))
 
 typedef struct tagSP_DPMetaField {
+	short mMySize;
+	short mId;
+
 	char * mName;
 	short mOffset;
 	short mType;
 	char mIsPtr;
+	char mIsRequired;
 	short mArraySize;
 	char * mReferTo;
 	short mFieldSize;
@@ -45,7 +49,9 @@ typedef struct tagSP_DPMetaField {
 } SP_DPMetaField_t;
 
 typedef struct tagSP_DPMetaStruct {
+	short mMySize;
 	short mId;
+
 	char * mName;
 	int mSize;
 	short mFieldCount;
@@ -53,6 +59,8 @@ typedef struct tagSP_DPMetaStruct {
 } SP_DPMetaStruct_t;
 
 typedef struct tagSP_DPMetaInfo {
+	short mMySize;
+
 	char * mPrefix;
 	char * mFileName;
 	short mStructCount;

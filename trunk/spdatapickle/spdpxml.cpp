@@ -104,13 +104,17 @@ int SP_DPXmlUtils :: parseField( SP_XmlNode * xmlNode, SP_DPSyntaxField * field 
 
 	field->setName( name );
 
+	const char * id = element->getAttrValue( "id" );
 	const char * type = element->getAttrValue( "type" );
 	const char * arraySize = element->getAttrValue( "arraysize" );
 	const char * referTo = element->getAttrValue( "referto" );
+	const char * required = element->getAttrValue( "required" );
 
+	if( NULL != id ) field->setId( atoi( id ) );
 	if( NULL != type ) field->setType( type );
 	if( NULL != arraySize ) field->setArraySize( atoi( arraySize ) );
 	if( NULL != referTo ) field->setReferTo( referTo );
+	if( NULL != required ) field->setRequired( atoi( required ) );
 
 	return NULL != type ? 0 : -1;
 }
