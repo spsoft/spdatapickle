@@ -1,3 +1,7 @@
+/*
+ * Copyright 2009 Stephen Liu
+ * For license terms, see the file COPYING along with this library.
+ */
 
 #include <string.h>
 #include <stdlib.h>
@@ -6,11 +10,13 @@
 
 #include "spdpmetautils.hpp"
 #include "spxmlpickle.hpp"
+#include "spjsonpickle.hpp"
 #include "spdpalloc.hpp"
 
-#include "spxmlutils.hpp"
+#include "spxml/spxmlutils.hpp"
+#include "spjson/spjsonutils.hpp"
 
-void testEmail()
+void testEmail( SP_DataPickle * pickle )
 {
 	XYZEmail_t email;
 	memset( &email, 0, sizeof( email ) );
@@ -20,8 +26,7 @@ void testEmail()
 
 	SP_XmlStringBuffer buffer;
 
-	SP_XmlPickle pickle( gXYZAddrbookMetaInfo );
-	pickle.pickle( &email, sizeof( email ), eTypeXYZEmail, &buffer );
+	pickle->pickle( &email, sizeof( email ), eTypeXYZEmail, &buffer );
 
 	printf( "%s\n\n", buffer.getBuffer() );
 
@@ -29,7 +34,7 @@ void testEmail()
 	alloc.free( &email, sizeof( email ), eTypeXYZEmail );
 }
 
-void testPhoneNumber()
+void testPhoneNumber( SP_DataPickle * pickle )
 {
 	XYZPhoneNumber_t phoneNumber;
 	memset( &phoneNumber, 0, sizeof( phoneNumber ) );
@@ -39,9 +44,7 @@ void testPhoneNumber()
 	phoneNumber.mContent = strdup( "12345678" );
 
 	SP_XmlStringBuffer buffer;
-
-	SP_XmlPickle pickle( gXYZAddrbookMetaInfo );
-	pickle.pickle( &phoneNumber, sizeof( phoneNumber ), eTypeXYZPhoneNumber, &buffer );
+	pickle->pickle( &phoneNumber, sizeof( phoneNumber ), eTypeXYZPhoneNumber, &buffer );
 
 	printf( "%s\n\n", buffer.getBuffer() );
 
@@ -84,7 +87,7 @@ void initContact( XYZContact_t * contact )
 	}
 }
 
-void testContact()
+void testContact( SP_DataPickle * pickle )
 {
 	XYZContact_t contact;
 
@@ -92,8 +95,7 @@ void testContact()
 
 	SP_XmlStringBuffer buffer;
 
-	SP_XmlPickle pickle( gXYZAddrbookMetaInfo );
-	pickle.pickle( &contact, sizeof( contact ), eTypeXYZContact, &buffer );
+	pickle->pickle( &contact, sizeof( contact ), eTypeXYZContact, &buffer );
 
 	printf( "%s\n\n", buffer.getBuffer() );
 
@@ -101,7 +103,7 @@ void testContact()
 	alloc.free( &contact, sizeof( contact ), eTypeXYZContact );
 }
 
-void testUnpickle()
+void testUnpickle( SP_DataPickle * pickle )
 {
 	XYZContact_t org;
 
@@ -109,15 +111,14 @@ void testUnpickle()
 
 	SP_XmlStringBuffer buffer;
 
-	SP_XmlPickle pickle( gXYZAddrbookMetaInfo );
-	pickle.pickle( &org, sizeof( org ), eTypeXYZContact, &buffer );
+	pickle->pickle( &org, sizeof( org ), eTypeXYZContact, &buffer );
 
-	printf( "%s\n", buffer.getBuffer() );
+	printf( "pickle: %s\n", buffer.getBuffer() );
 
 	XYZContact_t contact;
 	memset( &contact, 0, sizeof( contact ) );
 
-	int ret = pickle.unpickle( buffer.getBuffer(), buffer.getSize(),
+	int ret = pickle->unpickle( buffer.getBuffer(), buffer.getSize(),
 			eTypeXYZContact, &contact, sizeof( contact ) );
 
 	printf( "Unpickle %d\n\n", ret );
@@ -156,12 +157,18 @@ int main( int argc, char * argv[] )
 {
 	SP_DPMetaUtils::dump( gXYZAddrbookMetaInfo );
 
-	printf( "\n" );
+	SP_XmlPickle  xmlPickle( gXYZAddrbookMetaInfo );
+	SP_JsonPickle jsonPickle( gXYZAddrbookMetaInfo );
 
-	//testEmail();
-	//testPhoneNumber();
-	//testContact();
-	testUnpickle();
+	SP_DataPickle * pickle = &jsonPickle;
+
+	testEmail( pickle );
+
+	testPhoneNumber( pickle );
+
+	testContact( pickle );
+
+	testUnpickle( pickle );
 
 	return 0;
 }
