@@ -33,8 +33,8 @@ void SP_DPMetaUtils :: dump( SP_DPMetaInfo_t * metaInfo )
 				//tmp, field->mOffset, field->mFieldSize, field->mItemSize, field->mType, field->mIsPtr,
 				//field->mArraySize, field->mReferTo );
 
-			printf( "field name %-15s offset %d, type %d, isptr %d, isreq %d, array.size %d, referto [%s]\n",
-				tmp, field->mOffset, field->mFieldSize, field->mIsPtr, field->mIsRequired,
+			printf( "field name %-15s id %d, offset %d, type %d, isptr %d, isreq %d, array.size %d, referto [%s]\n",
+				tmp, field->mId, field->mOffset, field->mFieldSize, field->mIsPtr, field->mIsRequired,
 				field->mArraySize, field->mReferTo );
 		}
 	}

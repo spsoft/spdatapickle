@@ -17,7 +17,7 @@ CFLAGS += -I../
 LDFLAGS += -L../spxml/ -lspxml -L../spjson/ -lspjson
 
 LIBOBJS = spdpbase64.o spdpmetainfo.o spdpalloc.o spdpmetautils.o \
-		spdatapickle.o spxmlpickle.o spjsonpickle.o
+		spdatapickle.o spxmlpickle.o spjsonpickle.o sppbpickle.o
 
 TARGET =  libspdatapickle.so libspdatapickle.a \
 		spxml2struct testaddrbook

@@ -282,7 +282,7 @@ int SP_XmlPickle :: unpickle( SP_XmlElementNode * root, int type, void * structu
 			if( field->mIsPtr ) {
 				int referCount = SP_DPMetaUtils::getReferCount( structure, metaStruct, field );
 				SP_DPMetaStruct_t * referStruct = SP_DPMetaUtils::find( mMetaInfo, field->mType );
-				char * referBase = (char*)malloc( referCount * field->mItemSize );
+				char * referBase = (char*)calloc( field->mItemSize, referCount );
 				*(void**)(base + field->mOffset) = referBase;
 
 				for( int j = 0; 0 == ret && j < referCount; j++ ) {
@@ -292,7 +292,8 @@ int SP_XmlPickle :: unpickle( SP_XmlElementNode * root, int type, void * structu
 							referBase + ( j * referStruct->mSize ), field->mItemSize );
 				}
 			} else {
-				ret = unpickle( fieldHandle.toElement(), field->mType, base + field->mOffset, field->mItemSize );
+				ret = unpickle( fieldHandle.getChild(0).toElement(), field->mType,
+						base + field->mOffset, field->mItemSize );
 			}
 		} else {
 			ret = unpickleBaseType( fieldHandle.toElement(), metaStruct, field, structure );

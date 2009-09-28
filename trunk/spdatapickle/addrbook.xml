@@ -2,32 +2,39 @@
 <metainfo prefix="XYZ" filename="addrbook">
 
 	<struct name="PhoneNumber">
-		<field name="Type"    type="char" arraysize="10" />
-		<field name="Primary" type="int32" />
-		<field name="Content" type="*char" />
+		<field id="1" name="Type"    type="char" arraysize="10" />
+		<field id="2" name="Primary" type="int32" />
+		<field id="3" name="Content" type="*char" />
 	</struct>
 
 	<struct name="Email">
-		<field name="Type"    type="char" arraysize="10" />
-		<field name="Address" type="*char" />
-		<field name="Nickname" type="*char" required="0" />
+		<field id="1" name="Type"    type="char" arraysize="10" />
+		<field id="2" name="Address" type="*char" />
+		<field id="3" name="Nickname" type="*char" required="0" />
 	</struct>
 
 	<struct name="Buffer">
-		<field name="Size" type="int32" />
-		<field name="Buffer" type="*char" referto="Size" />
+		<field id="1" name="Size" type="int32" />
+		<field id="2" name="Buffer" type="*char" referto="Size" />
+	</struct>
+
+	<struct name="LuckNumber">
+		<field id="1" name="Count" type="int16" />
+		<field id="2" name="List"  type="int16" arraysize="10" referto="Count" />
 	</struct>
 
 	<struct name="Contact">
-		<field name="Name"   type="*char" />
+		<field id="1" name="Name"   type="*char" />
 
-		<field name="Image" type="Buffer" />
+		<field id="2" name="Image" type="Buffer" />
 
-		<field name="EmailList"  type="*Email" referto="EmailCount" />
-		<field name="EmailCount" type="int32" required="0" />
+		<field id="3" name="EmailList"  type="*Email" referto="EmailCount" />
+		<field id="4" name="EmailCount" type="int32" required="0" />
 
-		<field name="PhoneCount" type="int32" />
-		<field name="PhoneList" type="*PhoneNumber" referto="PhoneCount" />
+		<field id="5" name="PhoneCount" type="int32" />
+		<field id="6" name="PhoneList" type="*PhoneNumber" referto="PhoneCount" />
+
+		<field id="7" name="LuckNumber" type="LuckNumber" />
 	</struct>
 
 </metainfo>
