@@ -263,7 +263,7 @@ int SP_JsonPickle :: unpickle( SP_JsonNode * root, int type, void * structure, i
 			if( field->mIsPtr ) {
 				int referCount = SP_DPMetaUtils::getReferCount( structure, metaStruct, field );
 				SP_DPMetaStruct_t * referStruct = SP_DPMetaUtils::find( mMetaInfo, field->mType );
-				char * referBase = (char*)malloc( referCount * field->mItemSize );
+				char * referBase = (char*)calloc( field->mItemSize, referCount );
 				*(void**)(base + field->mOffset) = referBase;
 
 				for( int j = 0; 0 == ret && j < referCount; j++ ) {
