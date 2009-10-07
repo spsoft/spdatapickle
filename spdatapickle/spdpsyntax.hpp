@@ -44,12 +44,16 @@ public:
 	void setRequired( int isRequired );
 	int  isRequired();
 
+	void setReferred( int isReferred );
+	int  isReferred();
+
 private:
 	int mId;
 	char mType[ 128 ];
 	int mArraySize;
 	char mReferTo[ 128 ];
 	int mIsRequired;
+	int mIsReferred;
 };
 
 typedef std::vector<SP_DPSyntaxField> SP_DPSyntaxFieldVector;
