@@ -148,6 +148,15 @@ int SP_DPMetaUtils :: setReferCount( void * structure, SP_DPMetaStruct_t * metaS
 		case eTypeSPDPInt32:
 			*(int*)ptr = referCount;
 			break;
+		case eTypeSPDPUint32:
+			*(unsigned int*)ptr = referCount;
+			break;
+		case eTypeSPDPInt64:
+			*(long long*)ptr = referCount;
+			break;
+		case eTypeSPDPUint64:
+			*(unsigned long long*)ptr = referCount;
+			break;
 		default:
 			ret = -1;
 			break;
