@@ -183,9 +183,9 @@ void SP_DPCodeRender :: generateMetaField( SP_DPSyntaxStruct * structure, FILE *
 
 		fprintf( writer, "\t{ sizeof(SP_DPMetaField_t), %d, \"%s\",\n"
 				"\t\tSP_DP_FIELD_OFFSET(%s_t, %s), %s, %d, %d, %d,\n"
-				"\t\t\"%s\", sizeof(%s), sizeof(%s) }",
+				"\t\t\"%s\", sizeof(%s), sizeof(%s), %d }",
 				fit->getId(), fit->getName(), sname, fname, ename, isPtr ? 1 : 0, fit->isRequired() ? 1 : 0,
-				fit->getArraySize(), fit->getReferTo(), tname, rawname );
+				fit->getArraySize(), fit->getReferTo(), tname, rawname, fit->isReferred() ? 1 : 0 );
 
 		if( flist->end() == ( fit + 1 ) ) {
 			fprintf( writer, "\n" );

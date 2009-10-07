@@ -147,6 +147,21 @@ int SP_DPXmlUtils :: parseStruct( SP_XmlNode * xmlNode, SP_DPSyntaxStruct * stru
 		}
 	}
 
+	SP_DPSyntaxFieldVector * fieldList = structure->getFieldList();
+	SP_DPSyntaxFieldVector::iterator fit = fieldList->begin();
+
+	for( ; fieldList->end() != fit; ++fit ) {
+		if( '\0' != *( fit->getReferTo() ) ) {
+			SP_DPSyntaxFieldVector::iterator it = fieldList->begin();
+			for( ; fieldList->end() != it; ++it ) {
+				if( 0 == strcmp( it->getName(), fit->getReferTo() ) ) {
+					it->setReferred( 1 );
+					break;
+				}
+			}
+		}
+	}
+
 	return ret;
 }
 

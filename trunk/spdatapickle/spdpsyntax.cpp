@@ -35,6 +35,7 @@ SP_DPSyntaxField :: SP_DPSyntaxField()
 {
 	mId = 0;
 	mIsRequired = 1;
+	mIsReferred = 0;
 
 	SP_DP_MEMSET(mType);
 	SP_DP_MEMSET(mReferTo);
@@ -98,6 +99,16 @@ void SP_DPSyntaxField :: setRequired( int isRequired )
 int  SP_DPSyntaxField :: isRequired()
 {
 	return mIsRequired;
+}
+
+void SP_DPSyntaxField :: setReferred( int isReferred )
+{
+	mIsReferred = isReferred;
+}
+
+int  SP_DPSyntaxField :: isReferred()
+{
+	return mIsReferred;
 }
 
 //=========================================================

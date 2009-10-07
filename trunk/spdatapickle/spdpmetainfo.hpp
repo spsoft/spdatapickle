@@ -46,6 +46,7 @@ typedef struct tagSP_DPMetaField {
 	char * mReferTo;
 	short mFieldSize;
 	short mItemSize;
+	char mIsReferred;
 } SP_DPMetaField_t;
 
 typedef struct tagSP_DPMetaStruct {
