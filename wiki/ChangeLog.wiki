@@ -1,6 +1,10 @@
 #labels Featured
 {{{
 
+Changes in version 0.3 (10.07.2009)
+-------------------------------------
+* ProtoBuf pickle was added
+
 Changes in version 0.2 (08.02.2009)
 -------------------------------------
 * Json pickle was added
