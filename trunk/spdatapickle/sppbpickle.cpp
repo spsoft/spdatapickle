@@ -194,7 +194,8 @@ int SP_ProtoBufPickle :: pickleBasePtr( void * ptr, int type,
 
 int SP_ProtoBufPickle :: unpickle( const char * data, int len, int type, void * structure, int size )
 {
-	SP_ProtoBufDecoder decoder( data, len );
+	SP_ProtoBufDecoder decoder;
+	decoder.copyFrom( data, len );
 
 	return unpickle( &decoder, type, structure, size );
 }
@@ -263,7 +264,8 @@ int SP_ProtoBufPickle :: unpickle( SP_ProtoBufDecoder * decoder, int type, void 
 					findRet = decoder->find( field->mId, &pair, j );
 
 					if( findRet ) {
-						SP_ProtoBufDecoder subDecoder( pair.mBinary.mBuffer, pair.mBinary.mLen );
+						SP_ProtoBufDecoder subDecoder;
+						subDecoder.attach( pair.mBinary.mBuffer, pair.mBinary.mLen );
 						ret = unpickle( &subDecoder, field->mType,
 								referBase + ( j * referStruct->mSize ), field->mItemSize );
 					} else {
@@ -271,7 +273,8 @@ int SP_ProtoBufPickle :: unpickle( SP_ProtoBufDecoder * decoder, int type, void 
 					}
 				}
 			} else {
-				SP_ProtoBufDecoder subDecoder( pair.mBinary.mBuffer, pair.mBinary.mLen );
+				SP_ProtoBufDecoder subDecoder;
+				subDecoder.attach( pair.mBinary.mBuffer, pair.mBinary.mLen );
 				ret = unpickle( &subDecoder, field->mType, base + field->mOffset, field->mItemSize );
 			}
 		} else {
