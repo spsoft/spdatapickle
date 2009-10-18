@@ -1,0 +1,72 @@
+
+<metainfo prefix="XYZ" filename="benchmark">
+
+	<struct name="SpeedMessage1SubMessage">
+		<field id="1"   name="field1"    type="int32" required="0" />
+		<field id="2"   name="field2"    type="int32" required="0" />
+		<field id="3"   name="field3"    type="int32" required="0" />
+		<field id="15"  name="field15"   type="*char" required="0" />
+		<field id="12"  name="field12"   type="char"  required="0" />
+		<field id="13"  name="field13"   type="int64" required="0" />
+		<field id="14"  name="field14"   type="int64" required="0" />
+		<field id="16"  name="field16"   type="int64" required="0" />
+		<field id="19"  name="field19"   type="int32" required="0" />
+		<field id="20"  name="field20"   type="char"  required="0" />
+		<field id="28"  name="field28"   type="char"  required="0" />
+		<!-- <field id="21"  name="field21"  type="fixed64" required="0" /> -->
+		<field id="22"  name="field22"   type="int32" required="0" />
+		<field id="23"  name="field23"   type="char"  required="0" />
+		<field id="206" name="field206"  type="char"  required="0" />
+		<!-- <field id="203" name="field203"  type="fixed32" required="0" /> -->
+		<field id="204" name="field204"  type="int32" required="0" />
+		<field id="205" name="field205"  type="*char" required="0" />
+		<field id="207" name="field207"  type="uint64" required="0" />
+		<field id="300" name="field300"  type="uint64" required="0" />
+	</struct>
+
+	<struct name="SpeedMessage1">
+		<field id="1"   name="field1"    type="*char" required="1" />
+		<field id="9"   name="field9"    type="*char" required="0" />
+		<field id="18"  name="field18"   type="*char" required="0" />
+		<field id="80"  name="field80"   type="char"  required="0" />
+		<field id="81"  name="field81"   type="char"  required="0" />
+		<field id="2"   name="field2"    type="int32" required="1" />
+		<field id="3"   name="field3"    type="int32" required="1" />
+		<field id="280" name="field280"  type="int32" required="0" />
+		<field id="6"   name="field6"    type="int32" required="0" />
+		<field id="22"  name="field22"   type="int64" required="0" />
+		<field id="4"   name="field4"    type="*char" required="0" />
+		<!--  <field id="5"   name="field5"    type="fixed64" required="0" /> -->
+		<field id="59"  name="field59"   type="char"  required="0" />
+		<field id="7"   name="field7"    type="*char" required="0" />
+		<field id="16"  name="field16"   type="int32" required="0" />
+		<field id="130" name="field130"  type="int32" required="0" />
+		<field id="12"  name="field12"   type="char"  required="0" />
+		<field id="17"  name="field17"   type="char"  required="0" />
+		<field id="13"  name="field13"   type="char"  required="0" />
+		<field id="14"  name="field14"   type="char"  required="0" />
+		<field id="104" name="field104"  type="int32" required="0" />
+		<field id="100" name="field100"  type="int32" required="0" />
+		<field id="101" name="field101"  type="int32" required="0" />
+		<field id="102" name="field102"  type="*char" required="0" />
+		<field id="103" name="field103"  type="*char" required="0" />
+		<field id="29"  name="field29"   type="int32" required="0" />
+		<field id="30"  name="field30"   type="char"  required="0" />
+		<field id="60"  name="field60"   type="int32" required="0" />
+		<field id="271" name="field271"  type="int32" required="0" />
+		<field id="272" name="field272"  type="int32" required="0" />
+		<field id="150" name="field150"  type="int32" required="0" />
+		<field id="23"  name="field23"   type="int32" required="0" />
+		<field id="24"  name="field24"   type="char"  required="0" />
+		<field id="25"  name="field25"   type="int32" required="0" />
+		<field id="15"  name="field15"   type="SpeedMessage1SubMessage" required="0" />
+		<field id="78"  name="field78"   type="char"  required="0" />
+		<field id="67"  name="field67"   type="int32" required="0" />
+		<field id="68"  name="field68"   type="int32" required="0" />
+		<field id="128" name="field128"  type="int32" required="0" />
+		<field id="129" name="field129"  type="*char" required="0" />
+		<field id="131" name="field131"  type="int32" required="0" />
+	</struct>
+
+</metainfo>
+
