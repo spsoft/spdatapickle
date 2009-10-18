@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <string.h>
 #include <errno.h>
+#include <assert.h>
 
 #include "spdpxml.hpp"
 
@@ -137,6 +138,8 @@ int SP_DPXmlUtils :: parseStruct( SP_XmlNode * xmlNode, SP_DPSyntaxStruct * stru
 	int ret = 0;
 
 	for( int i = 0; i < children->getLength(); i++ ) {
+		if( SP_XmlNode::eELEMENT != children->get(i)->getType() ) continue;
+
 		SP_DPSyntaxField field;
 		if( 0 == parseField( children->get(i), &field ) ) {
 			structure->getFieldList()->push_back( field );

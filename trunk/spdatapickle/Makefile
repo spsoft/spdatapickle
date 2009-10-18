@@ -20,7 +20,7 @@ LIBOBJS = spdpbase64.o spdpmetainfo.o spdpalloc.o spdpmetautils.o \
 		spdatapickle.o spxmlpickle.o spjsonpickle.o sppbpickle.o
 
 TARGET =  libspdatapickle.so libspdatapickle.a \
-		spxml2struct testaddrbook
+		spxml2struct testaddrbook testbenchmark
 
 #--------------------------------------------------------------------
 
@@ -38,13 +38,21 @@ spxml2struct: spxml2struct.o spdpxml.o spdpsyntax.o spdpname.o spdpcode.o
 testaddrbook: dp_xyzaddrbook.o testaddrbook.o
 	$(LINKER) $(LDFLAGS) $^ -static -L. -lspdatapickle -lspxml -lspjson -lstdc++ -lm -o $@
 
+testbenchmark: dp_xyzbenchmark.o testbenchmark.o
+	$(LINKER) $(LDFLAGS) $^ -static -L. -lspdatapickle -lspxml -lspjson -lstdc++ -lm -o $@
+
 dp_xyzaddrbook.o: dp_xyzaddrbook.cpp
 
 dp_xyzaddrbook.cpp: addrbook.xml
-	@(LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):../spxml/; ./spxml2struct addrbook.xml)
+	@(LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):../spxml/; ./spxml2struct $^)
+
+dp_xyzbenchmark.o: dp_xyzbenchmark.cpp
+
+dp_xyzbenchmark.cpp: benchmark.xml
+	@(LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):../spxml/; ./spxml2struct $^)
 
 clean:
-	@( $(RM) *.o vgcore.* core core.* $(TARGET) )
+	@( $(RM) *.o vgcore.* core core.* $(TARGET) dp_*.?pp )
 
 #--------------------------------------------------------------------
 
