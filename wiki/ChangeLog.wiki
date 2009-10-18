@@ -1,6 +1,10 @@
 #labels Featured
 {{{
 
+Changes in version 0.4 (10.18.2009)
+-------------------------------------
+* Bugfix for ProtoBuf's wire format pickling
+
 Changes in version 0.3 (10.07.2009)
 -------------------------------------
 * ProtoBuf pickle was added
