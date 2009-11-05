@@ -169,10 +169,10 @@ int SP_JsonPickle :: pickleBasePtr( void * ptr, int type, SP_JsonStringBuffer * 
 			snprintf( tmp, sizeof( tmp ), "%u", *(unsigned int*)ptr );
 			break;
 		case eTypeSPDPInt64:
-			snprintf( tmp, sizeof( tmp ), "%lld", *(long long*)ptr );
+			snprintf( tmp, sizeof( tmp ), "%lld", *(int64_t*)ptr );
 			break;
 		case eTypeSPDPUint64:
-			snprintf( tmp, sizeof( tmp ), "%llu", *(unsigned long long*)ptr );
+			snprintf( tmp, sizeof( tmp ), "%llu", *(uint64_t*)ptr );
 			break;
 		case eTypeSPDPFloat:
 			snprintf( tmp, sizeof( tmp ), "%f", *(float*)ptr );
@@ -208,7 +208,7 @@ int SP_JsonPickle :: unpickle( const char * text, int len, int type, void * stru
 
 int SP_JsonPickle :: unpickle( SP_JsonNode * root, int type, void * structure, int size )
 {
-	int ret = 0;
+	int ret = 0, i = 0;
 
 	char * base = (char*)structure;
 
@@ -227,7 +227,7 @@ int SP_JsonPickle :: unpickle( SP_JsonNode * root, int type, void * structure, i
 	SP_JsonHandle rootHandle( root );
 
 	// unpickle the non-ptr base type, maybe include referCount
-	for( int i = 0; 0 == ret && i < metaStruct->mFieldCount; i++ ) {
+	for( i = 0; 0 == ret && i < metaStruct->mFieldCount; i++ ) {
 		SP_DPMetaField_t * field = metaStruct->mFieldList + i;
 
 		SP_JsonHandle fieldHandle = rootHandle.getChild( field->mName );
@@ -242,7 +242,7 @@ int SP_JsonPickle :: unpickle( SP_JsonNode * root, int type, void * structure, i
 		}
 	}
 
-	for( int i = 0; 0 == ret && i < metaStruct->mFieldCount; i++ ) {
+	for( i = 0; 0 == ret && i < metaStruct->mFieldCount; i++ ) {
 		SP_DPMetaField_t * field = metaStruct->mFieldList + i;
 
 		// these fields had been unpickled, skip
@@ -346,31 +346,31 @@ int SP_JsonPickle :: unpickleBasePtr( SP_JsonNode * node, int type, void * ptr )
 
 	switch( type ) {
 		case eTypeSPDPChar:
-			*(char*)ptr = nodeHandle.toInt()->getValue();
+			*(char*)ptr = (char)nodeHandle.toInt()->getValue();
 			break;
 		case eTypeSPDPInt16:
-			*(short*)ptr = nodeHandle.toInt()->getValue();
+			*(short*)ptr = (short)nodeHandle.toInt()->getValue();
 			break;
 		case eTypeSPDPUint16:
-			*(unsigned short*)ptr = nodeHandle.toInt()->getValue();
+			*(unsigned short*)ptr = (unsigned short)nodeHandle.toInt()->getValue();
 			break;
 		case eTypeSPDPInt32:
-			*(int*)ptr = nodeHandle.toInt()->getValue();
+			*(int*)ptr = (int)nodeHandle.toInt()->getValue();
 			break;
 		case eTypeSPDPUint32:
-			*(unsigned int*)ptr = nodeHandle.toInt()->getValue();
+			*(unsigned int*)ptr = (unsigned int)nodeHandle.toInt()->getValue();
 			break;
 		case eTypeSPDPInt64:
-			*(long long*)ptr = nodeHandle.toInt()->getValue();
+			*(int64_t*)ptr = nodeHandle.toInt()->getValue();
 			break;
 		case eTypeSPDPUint64:
-			*(unsigned long long*)ptr = nodeHandle.toInt()->getValue();
+			*(uint64_t*)ptr = nodeHandle.toInt()->getValue();
 			break;
 		case eTypeSPDPFloat:
-			*(float*)ptr = nodeHandle.toDouble()->getValue();
+			*(float*)ptr = (float)nodeHandle.toDouble()->getValue();
 			break;
 		case eTypeSPDPDouble:
-			*(float*)ptr = nodeHandle.toDouble()->getValue();
+			*(double*)ptr = nodeHandle.toDouble()->getValue();
 			break;
 		default:
 			ret = -1;

@@ -18,6 +18,8 @@
 #include "spxml/spxmlhandle.hpp"
 #include "spxml/spxmlnode.hpp"
 
+#include "spjson/spjsonport.hpp"
+
 SP_XmlPickle :: SP_XmlPickle( SP_DPMetaInfo_t * metaInfo )
 	: SP_DataPickle( metaInfo )
 {
@@ -149,10 +151,10 @@ int SP_XmlPickle :: pickleBasePtr( void * ptr, int type, SP_XmlStringBuffer * bu
 			snprintf( tmp, sizeof( tmp ), "%u", *(unsigned int*)ptr );
 			break;
 		case eTypeSPDPInt64:
-			snprintf( tmp, sizeof( tmp ), "%lld", *(long long*)ptr );
+			snprintf( tmp, sizeof( tmp ), "%lld", *(int64_t*)ptr );
 			break;
 		case eTypeSPDPUint64:
-			snprintf( tmp, sizeof( tmp ), "%llu", *(unsigned long long*)ptr );
+			snprintf( tmp, sizeof( tmp ), "%llu", *(uint64_t*)ptr );
 			break;
 		case eTypeSPDPFloat:
 			snprintf( tmp, sizeof( tmp ), "%f", *(float*)ptr );
@@ -229,7 +231,7 @@ int SP_XmlPickle :: unpickle( const char * xml, int len, int type, void * struct
 
 int SP_XmlPickle :: unpickle( SP_XmlElementNode * root, int type, void * structure, int size )
 {
-	int ret = 0;
+	int ret = 0, i = 0;
 
 	char * base = (char*)structure;
 
@@ -246,7 +248,7 @@ int SP_XmlPickle :: unpickle( SP_XmlElementNode * root, int type, void * structu
 	SP_XmlHandle rootHandle( root );
 
 	// unpickle the non-ptr base type, maybe include referCount
-	for( int i = 0; 0 == ret && i < metaStruct->mFieldCount; i++ ) {
+	for( i = 0; 0 == ret && i < metaStruct->mFieldCount; i++ ) {
 		SP_DPMetaField_t * field = metaStruct->mFieldList + i;
 
 		SP_XmlHandle fieldHandle = rootHandle.getChild( field->mName );
@@ -261,7 +263,7 @@ int SP_XmlPickle :: unpickle( SP_XmlElementNode * root, int type, void * structu
 		}
 	}
 
-	for( int i = 0; 0 == ret && i < metaStruct->mFieldCount; i++ ) {
+	for( i = 0; 0 == ret && i < metaStruct->mFieldCount; i++ ) {
 		SP_DPMetaField_t * field = metaStruct->mFieldList + i;
 
 		// these fields had been unpickled, skip
@@ -385,16 +387,20 @@ int SP_XmlPickle :: unpickleBasePtr( SP_XmlElementNode * node, int type, void * 
 			*(unsigned int*)ptr = strtoul( text, NULL, 10 );
 			break;
 		case eTypeSPDPInt64:
-			*(long long*)ptr = strtoll( text, NULL, 10 );
+			sscanf( text, "%lld", (int64_t*)ptr );
+			//*(int64_t*)ptr = _strtoll( text, NULL, 10 );
 			break;
 		case eTypeSPDPUint64:
-			*(unsigned long long*)ptr = strtoull( text, NULL, 10 );
+			sscanf( text, "%llu", (uint64_t*)ptr );
+			//*(uint64_t*)ptr = strtoull( text, NULL, 10 );
 			break;
 		case eTypeSPDPFloat:
-			*(float*)ptr = strtof( text, NULL );
+			sscanf( text, "%f", (float*)ptr );
+			//*(float*)ptr = strtof( text, NULL );
 			break;
 		case eTypeSPDPDouble:
-			*(float*)ptr = strtod( text, NULL );
+			sscanf( text, "%ld", (double*)ptr );
+			//*(float*)ptr = strtod( text, NULL );
 			break;
 		default:
 			ret = -1;

@@ -9,6 +9,8 @@
 #include "spdpsyntax.hpp"
 #include "spdpname.hpp"
 
+#include "spjson/spjsonport.hpp"
+
 SP_DPCodeRender :: SP_DPCodeRender( SP_DPNameRender * nameRender )
 {
 	mNameRender = nameRender;
