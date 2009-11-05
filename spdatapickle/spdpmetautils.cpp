@@ -10,6 +10,8 @@
 #include "spdpmetautils.hpp"
 #include "spdpmetainfo.hpp"
 
+#include "spjson/spjsonport.hpp"
+
 void SP_DPMetaUtils :: dump( SP_DPMetaInfo_t * metaInfo )
 {
 	char tmp[ 128 ] = { 0 };
@@ -152,10 +154,10 @@ int SP_DPMetaUtils :: setReferCount( void * structure, SP_DPMetaStruct_t * metaS
 			*(unsigned int*)ptr = referCount;
 			break;
 		case eTypeSPDPInt64:
-			*(long long*)ptr = referCount;
+			*(int64_t*)ptr = referCount;
 			break;
 		case eTypeSPDPUint64:
-			*(unsigned long long*)ptr = referCount;
+			*(uint64_t*)ptr = referCount;
 			break;
 		default:
 			ret = -1;

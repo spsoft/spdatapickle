@@ -182,7 +182,7 @@ int SP_ProtoBufPickle :: pickleBasePtr( void * ptr, int type,
 			encoder->addFloat( fieldId, *(float*)ptr );
 			break;
 		case eTypeSPDPDouble:
-			encoder->addFloat( fieldId, *(double*)ptr );
+			encoder->addDouble( fieldId, *(double*)ptr );
 			break;
 		default:
 			ret = -1;
@@ -202,7 +202,7 @@ int SP_ProtoBufPickle :: unpickle( const char * data, int len, int type, void * 
 
 int SP_ProtoBufPickle :: unpickle( SP_ProtoBufDecoder * decoder, int type, void * structure, int size )
 {
-	int ret = 0;
+	int ret = 0, i = 0;
 
 	char * base = (char*)structure;
 
@@ -211,7 +211,7 @@ int SP_ProtoBufPickle :: unpickle( SP_ProtoBufDecoder * decoder, int type, void 
 	if( NULL == metaStruct || metaStruct->mSize != size ) return -1;
 
 	// unpickle the non-ptr base type, maybe include referCount
-	for( int i = 0; 0 == ret && i < metaStruct->mFieldCount; i++ ) {
+	for( i = 0; 0 == ret && i < metaStruct->mFieldCount; i++ ) {
 		SP_DPMetaField_t * field = metaStruct->mFieldList + i;
 
 		// skip referred field
@@ -230,7 +230,7 @@ int SP_ProtoBufPickle :: unpickle( SP_ProtoBufDecoder * decoder, int type, void 
 		}
 	}
 
-	for( int i = 0; 0 == ret && i < metaStruct->mFieldCount; i++ ) {
+	for( i = 0; 0 == ret && i < metaStruct->mFieldCount; i++ ) {
 		SP_DPMetaField_t * field = metaStruct->mFieldList + i;
 
 		// skip referred field
@@ -380,26 +380,26 @@ int SP_ProtoBufPickle :: unpickleBasePtr( void * node, int type, void * ptr )
 
 	switch( type ) {
 		case eTypeSPDPChar:
-			*(char*)ptr = pair->mVarint.s;
+			*(char*)ptr = (char)pair->mVarint.s;
 			break;
 		case eTypeSPDPInt16:
-			*(int16_t*)ptr = pair->mVarint.s;
+			*(int16_t*)ptr = (int16_t)pair->mVarint.s;
 			break;
 		case eTypeSPDPUint16:
-			*(uint16_t*)ptr = pair->mVarint.u;
+			*(uint16_t*)ptr = (uint16_t)pair->mVarint.u;
 			break;
 		case eTypeSPDPInt32:
 			if( SP_ProtoBufDecoder::eWire32Bit == pair->mWireType ) {
 				*(int32_t*)ptr = pair->m32Bit.s;
 			} else {
-				*(int32_t*)ptr = pair->mVarint.s;
+				*(int32_t*)ptr = (int32_t)pair->mVarint.s;
 			}
 			break;
 		case eTypeSPDPUint32:
 			if( SP_ProtoBufDecoder::eWire32Bit == pair->mWireType ) {
 				*(uint32_t*)ptr = pair->m32Bit.u;
 			} else {
-				*(uint32_t*)ptr = pair->mVarint.u;
+				*(uint32_t*)ptr = (uint32_t)pair->mVarint.u;
 			}
 			break;
 		case eTypeSPDPInt64:

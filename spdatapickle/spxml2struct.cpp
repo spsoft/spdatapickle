@@ -10,9 +10,11 @@
 #include "spdpcode.hpp"
 #include "spdpname.hpp"
 
+#include "spjson/spjsonport.hpp"
+
 void usage( const char * program )
 {
-	printf( "Usage: %s <xml file>\n", program );
+	printf( "Usage: %s <xml file> <output dir>\n", program );
 }
 
 void printSyntaxTree( SP_DPSyntaxTree * syntaxTree )
@@ -39,12 +41,13 @@ void printSyntaxTree( SP_DPSyntaxTree * syntaxTree )
 
 int main( int argc, char * argv[] )
 {
-	if( argc < 2 ) {
+	if( argc < 3 ) {
 		usage( argv[0] );
 		return -1;
 	}
 
 	const char * xmlFile = argv[1];
+	const char * outputDir = argv[2];
 
 	SP_DPSyntaxTree syntaxTree;
 	SP_DPXmlUtils::parse( xmlFile, &syntaxTree );
@@ -52,12 +55,12 @@ int main( int argc, char * argv[] )
 	SP_DPNameRender nameRender( syntaxTree.getPrefix() );
 	SP_DPCodeRender codeRender( &nameRender );
 
-	char filename[ 128 ] = { 0 }, tmp[ 128 ] = { 0 };
+	char filename[ 256 ] = { 0 }, tmp[ 128 ] = { 0 };
 	nameRender.getFileName( syntaxTree.getName(), tmp, sizeof( tmp ) );
 
 	// header file
 	{
-		snprintf( filename, sizeof( filename ), "%s.hpp", tmp );
+		snprintf( filename, sizeof( filename ), "%s/%s.hpp", outputDir, tmp );
 		FILE * fp = fopen( filename, "w" );
 		codeRender.generateHeader( &syntaxTree, fp );
 		fclose( fp );
@@ -67,7 +70,7 @@ int main( int argc, char * argv[] )
 
 	// cpp file
 	{
-		snprintf( filename, sizeof( filename ), "%s.cpp", tmp );
+		snprintf( filename, sizeof( filename ), "%s/%s.cpp", outputDir, tmp );
 		FILE * fp = fopen( filename, "w" );
 		codeRender.generateMetadata( &syntaxTree, fp );
 		fclose( fp );

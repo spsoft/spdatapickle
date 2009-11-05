@@ -10,6 +10,8 @@
 #include "spdpname.hpp"
 #include "spdpsyntax.hpp"
 
+#include "spjson/spjsonport.hpp"
+
 SP_DPNameRender :: SP_DPNameRender( const char * prefix )
 {
 	strncpy( mPrefix, prefix, sizeof( mPrefix ) );

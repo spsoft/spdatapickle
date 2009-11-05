@@ -158,28 +158,30 @@ void testUnpickle( SP_DataPickle * pickle )
 		return;
 	}
 
+	int i = 0;
+
 	printf( "name %s\n", contact.mName );
 	printf( "image.size %d\n", contact.mImage.mSize );
 	printf( "image.buffer: " );
-	for( int i = 0; i < contact.mImage.mSize; i++ ) {
+	for( i = 0; i < contact.mImage.mSize; i++ ) {
 		printf( "%d ", contact.mImage.mBuffer[i] );
 	}
 	printf( "\n" );
 
 	printf( "email.count %d\n", contact.mEmailCount );
-	for( int i = 0; i < contact.mEmailCount; i++ ) {
+	for( i = 0; i < contact.mEmailCount; i++ ) {
 		XYZEmail_t * email = contact.mEmailList + i;
 		printf( "email#%d: %s, %s\n", i, email->mAddress, email->mType );
 	}
 
 	printf( "phone.count %d\n", contact.mPhoneCount );
-	for( int i = 0; i < contact.mPhoneCount; i++ ) {
+	for( i = 0; i < contact.mPhoneCount; i++ ) {
 		XYZPhoneNumber_t * phone = contact.mPhoneList + i;
 		printf( "phone#%d: %s, %s, %d\n", i, phone->mContent, phone->mType, phone->mPrimary );
 	}
 
 	printf( "luck.number.count %d\n", contact.mLuckNumber.mCount );
-	for( int i = 0; i < contact.mLuckNumber.mCount; i++ ) {
+	for( i = 0; i < contact.mLuckNumber.mCount; i++ ) {
 		printf( "number#%d: %d\n", i, contact.mLuckNumber.mList[i] );
 	}
 
