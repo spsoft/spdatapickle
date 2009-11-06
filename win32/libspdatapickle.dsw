@@ -47,6 +47,15 @@ Package=<5>
 
 Package=<4>
 {{{
+    Begin Project Dependency
+    Project_Dep_Name libspdatapickle
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name libspjson
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name libspxml
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -59,6 +68,24 @@ Package=<5>
 
 Package=<4>
 {{{
+    Begin Project Dependency
+    Project_Dep_Name spxml2struct
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "testbenchmark"=".\testbenchmark.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name spxml2struct
+    End Project Dependency
 }}}
 
 ###############################################################################

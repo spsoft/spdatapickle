@@ -42,7 +42,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I "..\\" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
 # ADD BASE RSC /l 0x804 /d "NDEBUG"
 # ADD RSC /l 0x804 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -50,7 +50,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib $(OUTDIR)\libspjson.lib /nologo /subsystem:console /machine:I386
+# ADD LINK32 ..\spjson-win32\$(OUTDIR)\libspjson.lib ..\spxml\win32\$(OutDir)\libspxml.lib /nologo /subsystem:console /machine:I386
 
 !ELSEIF  "$(CFG)" == "spxml2struct - Win32 Debug"
 
@@ -87,6 +87,22 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=..\spdatapickle\spdpcode.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\spdatapickle\spdpname.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\spdatapickle\spdpsyntax.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\spdatapickle\spdpxml.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\spdatapickle\spxml2struct.cpp
 # End Source File
 # End Group
@@ -97,6 +113,22 @@ SOURCE=..\spdatapickle\spxml2struct.cpp
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=..\spdatapickle\spdpcode.hpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\spdatapickle\spdpname.hpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\spdatapickle\spdpsyntax.hpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\spdatapickle\spdpxml.hpp
+# End Source File
 # End Group
 # End Target
 # End Project

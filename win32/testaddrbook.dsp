@@ -42,7 +42,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I "..\\" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
 # ADD BASE RSC /l 0x804 /d "NDEBUG"
 # ADD RSC /l 0x804 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -50,7 +50,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib $(OUTDIR)\libspjson.lib /nologo /subsystem:console /machine:I386
+# ADD LINK32 ..\spjson-win32\$(OUTDIR)\libspjson.lib ..\spxml\win32\$(OutDir)\libspxml.lib $(OutDir)\libspdatapickle.lib /nologo /subsystem:console /machine:I386
 
 !ELSEIF  "$(CFG)" == "testaddrbook - Win32 Debug"
 
@@ -86,6 +86,50 @@ LINK32=link.exe
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
+# Begin Source File
+
+SOURCE=..\spdatapickle\addrbook.xml
+
+!IF  "$(CFG)" == "testaddrbook - Win32 Release"
+
+# PROP Ignore_Default_Tool 1
+# Begin Custom Build - Compile xml description
+InputDir=\vmshare\spdatapickle-0.5\spdatapickle
+OutDir=.\Release
+InputPath=..\spdatapickle\addrbook.xml
+
+BuildCmds= \
+	$(OutDir)\spxml2struct $(InputPath) $(InputDir)
+
+"$(InputDir)dp_xyzaddrbook.hpp" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+   $(BuildCmds)
+
+"$(InputDir)dp_xyzaddrbook.cpp" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+   $(BuildCmds)
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "testaddrbook - Win32 Debug"
+
+# PROP Intermediate_Dir "Debug"
+# PROP Ignore_Default_Tool 1
+# Begin Custom Build - Compile xml description
+InputDir=\vmshare\spdatapickle-0.5\spdatapickle
+OutDir=.\Debug
+InputPath=..\spdatapickle\addrbook.xml
+
+BuildCmds= \
+	$(OutDir)\spxml2struct $(InputPath) $(InputDir)
+
+"$(InputDir)dp_xyzaddrbook.hpp" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+   $(BuildCmds)
+
+"$(InputDir)dp_xyzaddrbook.cpp" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+   $(BuildCmds)
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
 # Begin Source File
 
 SOURCE=..\spdatapickle\dp_xyzaddrbook.cpp
