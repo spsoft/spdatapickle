@@ -44,8 +44,8 @@ const char * SP_DPNameRender :: getTypeRawName( const char * type, char * name, 
 		{ "int32",  "int" },
 		{ "uint32", "unsigned int" },
 
-		{ "int64",  "long long" },
-		{ "uint64", "unsigned long long" },
+		{ "int64",  "int64_t" },
+		{ "uint64", "uint64_t" },
 
 		{ "float",  "float" },
 		{ "double", "double" },

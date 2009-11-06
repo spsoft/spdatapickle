@@ -39,7 +39,8 @@ void SP_DPCodeRender :: generateHeader( SP_DPSyntaxTree * syntaxTree, FILE * wri
 	fprintf( writer, "#endif\n" );
 	fprintf( writer, "\n" );
 
-	fprintf( writer, "#include \"spdpmetainfo.hpp\"\n" );
+	fprintf( writer, "#include \"spdatapickle/spdpmetainfo.hpp\"\n" );
+	fprintf( writer, "#include \"spjson/spjsonport.hpp\"\n" );
 	fprintf( writer, "\n" );
 
 	generateMetaEnum( syntaxTree, writer );
@@ -118,7 +119,7 @@ void SP_DPCodeRender :: generateMetadata( SP_DPSyntaxTree * syntaxTree, FILE * w
 	fprintf( writer, "\n" );
 
 	fprintf( writer, "#include \"%s.hpp\"\n", filename );
-	fprintf( writer, "#include \"spdpmetainfo.hpp\"\n" );
+	fprintf( writer, "#include \"spdatapickle/spdpmetainfo.hpp\"\n" );
 	fprintf( writer, "\n" );
 
 	SP_DPSyntaxStructVector * slist = syntaxTree->getStructList();

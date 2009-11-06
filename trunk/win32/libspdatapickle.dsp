@@ -41,7 +41,7 @@ RSC=rc.exe
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I "..\\" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /YX /FD /c
 # ADD BASE RSC /l 0x804 /d "NDEBUG"
 # ADD RSC /l 0x804 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -97,27 +97,11 @@ SOURCE=..\spdatapickle\spdpbase64.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\spdatapickle\spdpcode.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=..\spdatapickle\spdpmetainfo.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=..\spdatapickle\spdpmetautils.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\spdatapickle\spdpname.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\spdatapickle\spdpsyntax.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\spdatapickle\spdpxml.cpp
 # End Source File
 # Begin Source File
 
@@ -149,27 +133,11 @@ SOURCE=..\spdatapickle\spdpbase64.hpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\spdatapickle\spdpcode.hpp
-# End Source File
-# Begin Source File
-
 SOURCE=..\spdatapickle\spdpmetainfo.hpp
 # End Source File
 # Begin Source File
 
 SOURCE=..\spdatapickle\spdpmetautils.hpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\spdatapickle\spdpname.hpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\spdatapickle\spdpsyntax.hpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\spdatapickle\spdpxml.hpp
 # End Source File
 # Begin Source File
 
