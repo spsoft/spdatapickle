@@ -44,12 +44,12 @@ testbenchmark: dp_xyzbenchmark.o testbenchmark.o
 dp_xyzaddrbook.o: dp_xyzaddrbook.cpp
 
 dp_xyzaddrbook.cpp: addrbook.xml
-	@(LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):../spxml/; ./spxml2struct $^ .)
+	@(LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):../spxml/:../spjson; ./spxml2struct $^ .)
 
 dp_xyzbenchmark.o: dp_xyzbenchmark.cpp
 
 dp_xyzbenchmark.cpp: benchmark.xml
-	@(LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):../spxml/; ./spxml2struct $^ .)
+	@(LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):../spxml/:../spjson; ./spxml2struct $^ .)
 
 clean:
 	@( $(RM) *.o vgcore.* core core.* $(TARGET) dp_*.?pp )
