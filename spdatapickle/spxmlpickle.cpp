@@ -31,6 +31,27 @@ SP_XmlPickle :: ~SP_XmlPickle()
 
 int SP_XmlPickle :: pickle( void * structure, int size, int type, SP_XmlStringBuffer * buffer )
 {
+	SP_DPMetaStruct_t * metaStruct = SP_DPMetaUtils::find( mMetaInfo, type );
+
+	if( NULL == metaStruct ) return -1;
+
+	int ret = 0;
+
+	buffer->append( '<' );
+	buffer->append( metaStruct->mName );
+	buffer->append( ">\n" );
+
+	ret = realPickle( structure, size, type, buffer );
+
+	buffer->append( "</" );
+	buffer->append( metaStruct->mName );
+	buffer->append( ">\n" );
+
+	return ret;
+}
+
+int SP_XmlPickle :: realPickle( void * structure, int size, int type, SP_XmlStringBuffer * buffer )
+{
 	if( NULL == structure ) return -1;
 
 	char * base = (char*)structure;
@@ -40,10 +61,6 @@ int SP_XmlPickle :: pickle( void * structure, int size, int type, SP_XmlStringBu
 	if( NULL == metaStruct ) return -1;
 
 	if( metaStruct->mSize != size ) return -1;
-
-	buffer->append( '<' );
-	buffer->append( metaStruct->mName );
-	buffer->append( ">\n" );
 
 	for( int i = 0; i < metaStruct->mFieldCount; i++ ) {
 		SP_DPMetaField_t * field = metaStruct->mFieldList + i;
@@ -64,10 +81,18 @@ int SP_XmlPickle :: pickle( void * structure, int size, int type, SP_XmlStringBu
 				char * referBase = *(char**)(base + field->mOffset);
 
 				for( int j = 0; j < referCount; j++ ) {
-					pickle( referBase + ( j * referStruct->mSize ), field->mItemSize, field->mType, buffer );
+					buffer->append( '<' );
+					buffer->append( referStruct->mName );
+					buffer->append( ">\n" );
+
+					realPickle( referBase + ( j * referStruct->mSize ), field->mItemSize, field->mType, buffer );
+
+					buffer->append( "</" );
+					buffer->append( referStruct->mName );
+					buffer->append( ">\n" );
 				}
 			} else {
-				pickle( base + field->mOffset, field->mItemSize, field->mType, buffer );
+				realPickle( base + field->mOffset, field->mItemSize, field->mType, buffer );
 			}
 		} else {
 			pickleBaseType( structure, metaStruct, field, buffer );
@@ -77,10 +102,6 @@ int SP_XmlPickle :: pickle( void * structure, int size, int type, SP_XmlStringBu
 		buffer->append( field->mName );
 		buffer->append( ">\n" );
 	}
-
-	buffer->append( "</" );
-	buffer->append( metaStruct->mName );
-	buffer->append( ">\n" );
 
 	return 0;
 }
@@ -220,11 +241,17 @@ int SP_XmlPickle :: unpickle( const char * xml, int len, int type, void * struct
 		return -1;
 	}
 
-	if( NULL == parser.getDocument()->getRootElement() ) {
+	SP_XmlElementNode * root = parser.getDocument()->getRootElement();
+
+	if( NULL == root ) {
 		return -1;
 	}
 
-	SP_XmlElementNode * root = parser.getDocument()->getRootElement();
+	SP_DPMetaStruct_t * metaStruct = SP_DPMetaUtils::find( mMetaInfo, type );
+
+	if( 0 != strcmp( root->getName(), metaStruct->mName ) ) {
+		return -1;
+	}
 
 	return unpickle( root, type, structure, size );
 }
@@ -240,10 +267,6 @@ int SP_XmlPickle :: unpickle( SP_XmlElementNode * root, int type, void * structu
 	if( NULL == metaStruct || NULL == root ) return -1;
 
 	if( metaStruct->mSize != size ) return -1;
-
-	if( 0 != strcmp( root->getName(), metaStruct->mName ) ) {
-		return -1;
-	}
 
 	SP_XmlHandle rootHandle( root );
 
@@ -294,7 +317,7 @@ int SP_XmlPickle :: unpickle( SP_XmlElementNode * root, int type, void * structu
 							referBase + ( j * referStruct->mSize ), field->mItemSize );
 				}
 			} else {
-				ret = unpickle( fieldHandle.getChild(0).toElement(), field->mType,
+				ret = unpickle( fieldHandle.toElement(), field->mType,
 						base + field->mOffset, field->mItemSize );
 			}
 		} else {
@@ -399,7 +422,7 @@ int SP_XmlPickle :: unpickleBasePtr( SP_XmlElementNode * node, int type, void * 
 			//*(float*)ptr = strtof( text, NULL );
 			break;
 		case eTypeSPDPDouble:
-			sscanf( text, "%ld", (double*)ptr );
+			sscanf( text, "%lf", (double*)ptr );
 			//*(float*)ptr = strtod( text, NULL );
 			break;
 		default:
