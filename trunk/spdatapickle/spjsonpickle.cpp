@@ -52,9 +52,7 @@ int SP_JsonPickle :: pickle( void * structure, int size, int type, SP_JsonString
 
 	if( metaStruct->mSize != size ) return -1;
 
-	buffer->append( "{\"" );
-	buffer->append( metaStruct->mName );
-	buffer->append( "\":{\n" );
+	buffer->append( "{" );
 
 	int isFirst = 1;
 
@@ -99,7 +97,7 @@ int SP_JsonPickle :: pickle( void * structure, int size, int type, SP_JsonString
 		}
 	}
 
-	buffer->append( "\n}\n}\n" );
+	buffer->append( "}\n" );
 
 	return 0;
 }
@@ -217,10 +215,6 @@ int SP_JsonPickle :: unpickle( SP_JsonNode * root, int type, void * structure, i
 	if( NULL == metaStruct || NULL == root ) return -1;
 
 	if( metaStruct->mSize != size ) return -1;
-
-	SP_JsonHandle tmpHandle( root );
-
-	root = tmpHandle.getChild( metaStruct->mName ).toNode();
 
 	if( NULL == root ) return -1;
 
