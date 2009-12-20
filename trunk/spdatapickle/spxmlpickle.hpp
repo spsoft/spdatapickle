@@ -32,6 +32,8 @@ private:
 
 private:
 
+	virtual int realPickle( void * structure, int size, int type, SP_XmlStringBuffer * buffer );
+
 	int pickleBaseType( void * structure, SP_DPMetaStruct_t * metaStruct,
 			SP_DPMetaField_t * field, SP_XmlStringBuffer * buffer );
 
