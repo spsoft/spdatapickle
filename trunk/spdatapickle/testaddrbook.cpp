@@ -11,6 +11,7 @@
 
 #include "spdpmetautils.hpp"
 #include "spxmlpickle.hpp"
+#include "spxmlrpcpickle.hpp"
 #include "spjsonpickle.hpp"
 #include "sppbpickle.hpp"
 #include "spdpalloc.hpp"
@@ -194,7 +195,7 @@ int main( int argc, char * argv[] )
 {
 	if( argc < 2 ) {
 		printf( "Usage: %s <type>\n\n", argv[0] );
-		printf( "\ttype 0 - xml, 1 - json, 2 - protobuf\n\n" );
+		printf( "\ttype 0 - xml, 1 - xmlrpc, 2 - json, 3 - protobuf\n\n" );
 		return -1;
 	}
 
@@ -202,13 +203,15 @@ int main( int argc, char * argv[] )
 
 	SP_DPMetaUtils::dump( gXYZAddrbookMetaInfo );
 
-	SP_XmlPickle  xmlPickle( gXYZAddrbookMetaInfo );
-	SP_JsonPickle jsonPickle( gXYZAddrbookMetaInfo );
+	SP_XmlPickle      xmlPickle( gXYZAddrbookMetaInfo );
+	SP_XmlRpcPickle   xmlRpcPickle( gXYZAddrbookMetaInfo );
+	SP_JsonPickle     jsonPickle( gXYZAddrbookMetaInfo );
 	SP_ProtoBufPickle pbPickle( gXYZAddrbookMetaInfo );
 
 	SP_DataPickle * pickle = &xmlPickle;
-	if( 1 == type ) pickle = &jsonPickle;
-	if( 2 == type ) pickle = &pbPickle;
+	if( 1 == type ) pickle = &xmlRpcPickle;
+	if( 2 == type ) pickle = &jsonPickle;
+	if( 3 == type ) pickle = &pbPickle;
 
 	testEmail( pickle );
 
