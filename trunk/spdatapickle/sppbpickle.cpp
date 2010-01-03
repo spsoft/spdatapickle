@@ -57,7 +57,7 @@ int SP_ProtoBufPickle :: pickle( void * structure, int size, int type, SP_ProtoB
 		if( field->mIsPtr && ( field->mArraySize <= 0 )
 				&& ( NULL == *(void**) ( base + field->mOffset ) ) ) continue;
 
-		if( field->mType > eTypeSPDPUserDefine ) {
+		if( field->mType > eTypeSPDPBuiltin ) {
 			SP_ProtoBufEncoder subEncoder;
 
 			if( field->mIsPtr ) {
@@ -217,7 +217,7 @@ int SP_ProtoBufPickle :: unpickle( SP_ProtoBufDecoder * decoder, int type, void 
 		// skip referred field
 		if( field->mIsReferred ) continue;
 
-		if( field->mType < eTypeSPDPUserDefine && 0 == field->mIsPtr ) {
+		if( field->mType < eTypeSPDPBuiltin && 0 == field->mIsPtr ) {
 			SP_ProtoBufDecoder::KeyValPair_t pair;
 			bool findRet = decoder->find( field->mId, &pair );
 
@@ -237,7 +237,7 @@ int SP_ProtoBufPickle :: unpickle( SP_ProtoBufDecoder * decoder, int type, void 
 		if( field->mIsReferred ) continue;
 
 		// these fields had been unpickled, skip
-		if( field->mType < eTypeSPDPUserDefine && 0 == field->mIsPtr ) continue;
+		if( field->mType < eTypeSPDPBuiltin && 0 == field->mIsPtr ) continue;
 
 		SP_ProtoBufDecoder::KeyValPair_t pair;
 		bool findRet = decoder->find( field->mId, &pair );
@@ -251,7 +251,7 @@ int SP_ProtoBufPickle :: unpickle( SP_ProtoBufDecoder * decoder, int type, void 
 			continue;
 		}
 
-		if( field->mType > eTypeSPDPUserDefine ) {
+		if( field->mType > eTypeSPDPBuiltin ) {
 			if( field->mIsPtr ) {
 				int referCount = pair.mRepeatedCount;
 				SP_DPMetaUtils::setReferCount( structure, metaStruct, field, referCount );

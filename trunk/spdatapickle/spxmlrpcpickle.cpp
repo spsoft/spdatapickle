@@ -71,7 +71,7 @@ int SP_XmlRpcPickle :: realPickle( void * structure, int size, int type, SP_XmlS
 
 		buffer->append( "<value>" );
 
-		if( field->mType > eTypeSPDPUserDefine ) {
+		if( field->mType > eTypeSPDPBuiltin ) {
 
 			buffer->append( "\n" );
 
@@ -326,7 +326,7 @@ int SP_XmlRpcPickle :: unpickle( SP_XmlElementNode * root, int type, void * stru
 
 		SP_XmlElementNode * fieldNode = findStructMember( root, field->mName );
 
-		if( field->mType < eTypeSPDPUserDefine && 0 == field->mIsPtr ) {
+		if( field->mType < eTypeSPDPBuiltin && 0 == field->mIsPtr ) {
 			if( NULL == fieldNode ) {
 				if( field->mIsRequired ) ret = -1;
 				continue;
@@ -340,7 +340,7 @@ int SP_XmlRpcPickle :: unpickle( SP_XmlElementNode * root, int type, void * stru
 		SP_DPMetaField_t * field = metaStruct->mFieldList + i;
 
 		// these fields had been unpickled, skip
-		if( field->mType < eTypeSPDPUserDefine && 0 == field->mIsPtr ) continue;
+		if( field->mType < eTypeSPDPBuiltin && 0 == field->mIsPtr ) continue;
 
 		SP_XmlElementNode * fieldNode = findStructMember( root, field->mName );
 
@@ -353,7 +353,7 @@ int SP_XmlRpcPickle :: unpickle( SP_XmlElementNode * root, int type, void * stru
 			continue;
 		}
 
-		if( field->mType > eTypeSPDPUserDefine ) {
+		if( field->mType > eTypeSPDPBuiltin ) {
 			SP_XmlHandle fieldHandle( fieldNode );
 			fieldNode = fieldHandle.getElement(0).toElement();
 
@@ -445,6 +445,9 @@ int SP_XmlRpcPickle :: unpickleBasePtr( SP_XmlElementNode * node, int type, void
 
 	SP_XmlHandle nodeHandle( node );
 	SP_XmlHandle cdataHandle = nodeHandle.getElement(0).getChild(0);
+
+	if( NULL == cdataHandle.toCData() ) return -1;
+
 	const char * text = cdataHandle.toCData()->getText();
 
 	switch( type ) {

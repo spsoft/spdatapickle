@@ -21,7 +21,7 @@ public:
 
 	static SP_DPMetaField_t * find( SP_DPMetaStruct_t * metaStruct, const char * name );
 
-	static int getReferCount( void * structure,
+	static int getReferCount( const void * structure,
 		SP_DPMetaStruct_t * metaStruct, SP_DPMetaField_t * field );
 
 	static int setReferCount( void * structure,

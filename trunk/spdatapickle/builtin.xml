@@ -1,0 +1,75 @@
+
+<metainfo prefix="SP_DP" filename="builtin">
+
+	<struct name="Char">
+		<field name="Value" type="char" id="1" />
+	</struct>
+
+	<struct name="Int16">
+		<field name="Value" type="int16" id="1" />
+	</struct>
+
+	<struct name="UInt16">
+		<field name="Value" type="uint16" id="1" />
+	</struct>
+
+	<struct name="Int32">
+		<field name="Value" type="int32" id="1" />
+	</struct>
+
+	<struct name="UInt32">
+		<field name="Value" type="uint32" id="1" />
+	</struct>
+
+	<struct name="Int64">
+		<field name="Value" type="int64" id="1" />
+	</struct>
+
+	<struct name="UInt64">
+		<field name="Value" type="uint64" id="1" />
+	</struct>
+
+	<struct name="Float">
+		<field name="Value" type="float" id="1" />
+	</struct>
+
+	<struct name="Double">
+		<field name="Value" type="double" id="1" />
+	</struct>
+
+	<struct name="String">
+		<field name="String" type="*char" id="1" />
+	</struct>
+
+	<struct name="StringList">
+		<field name="List" type="*String" id="1" referto="Count" />
+		<field name="Count" type="int32"   id="2" />
+	</struct>
+
+	<struct name="Buffer">
+		<field name="Buffer" type="*char" id="1" referto="Size" />
+		<field name="Size" type="int32" id="2" />
+	</struct>
+
+	<struct name="Int32List">
+		<field name="List" type="*int32" id="1" referto="Count" />
+		<field name="Count" type="int32"  id="2" />
+	</struct>
+
+	<struct name="UInt32List">
+		<field name="List" type="*uint32" id="1" referto="Count" />
+		<field name="Count" type="int32"  id="2" />
+	</struct>
+
+	<struct name="Int64List">
+		<field name="List" type="*int64" id="1" referto="Count" />
+		<field name="Count" type="int32"  id="2" />
+	</struct>
+
+	<struct name="UInt64List">
+		<field name="List" type="*uint64" id="1" referto="Count" />
+		<field name="Count" type="int32"  id="2" />
+	</struct>
+
+</metainfo>
+

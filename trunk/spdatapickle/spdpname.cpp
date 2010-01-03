@@ -38,17 +38,34 @@ const char * SP_DPNameRender :: getTypeRawName( const char * type, char * name, 
 	static Type2Name_t type2name [] = {
 		{ "char",   "char" },
 
-		{ "int16",  "short" },
-		{ "uint16", "unsigned short" },
+		{ "int16",  "int16_t" },
+		{ "uint16", "uint16_t" },
 
-		{ "int32",  "int" },
-		{ "uint32", "unsigned int" },
+		{ "int32",  "int32_t" },
+		{ "uint32", "uint32_t" },
 
 		{ "int64",  "int64_t" },
 		{ "uint64", "uint64_t" },
 
 		{ "float",  "float" },
 		{ "double", "double" },
+
+		{ "SP_DPChar",   "SP_DPChar_t" },
+		{ "SP_DPInt16",  "SP_DPInt16_t" },
+		{ "SP_DPUInt16", "SP_DPUInt16_t" },
+		{ "SP_DPInt32",  "SP_DPInt32_t" },
+		{ "SP_DPUInt32", "SP_DPUInt32_t" },
+		{ "SP_DPInt64",  "SP_DPInt64_t" },
+		{ "SP_DPUInt64", "SP_DPUInt64_t" },
+		{ "SP_DPFloat",  "SP_DPFloat_t" },
+		{ "SP_DPDouble", "SP_DPDouble_t" },
+		{ "SP_DPString", "SP_DPString_t" },
+		{ "SP_DPBuffer",     "SP_DPBuffer_t" },
+		{ "SP_DPStringList", "SP_DPStringList_t" },
+		{ "SP_DPInt32List",  "SP_DPInt32List_t" },
+		{ "SP_DPUInt32List", "SP_DPUInt32List_t" },
+		{ "SP_DPInt64List",  "SP_DPInt64List_t" },
+		{ "SP_DPUInt64List", "SP_DPUInt64List_t" },
 
 		{ NULL, NULL }
 	};
@@ -132,6 +149,23 @@ const char * SP_DPNameRender :: getTypeEnum( const char * type, char * name, int
 
 		{ "float",  "eTypeSPDPFloat" },
 		{ "double", "eTypeSPDPDouble" },
+
+		{ "SP_DPChar",   "eTypeSP_DPChar" },
+		{ "SP_DPInt16",  "eTypeSP_DPInt16" },
+		{ "SP_DPUInt16", "eTypeSP_DPUInt16" },
+		{ "SP_DPInt32",  "eTypeSP_DPInt32" },
+		{ "SP_DPUInt32", "eTypeSP_DPUInt32" },
+		{ "SP_DPInt64",  "eTypeSP_DPInt64" },
+		{ "SP_DPUInt64", "eTypeSP_DPUInt64" },
+		{ "SP_DPFloat",  "eTypeSP_DPFloat" },
+		{ "SP_DPDouble", "eTypeSP_DPDouble" },
+		{ "SP_DPString", "eTypeSP_DPString" },
+		{ "SP_DPBuffer",     "eTypeSP_DPBuffer" },
+		{ "SP_DPStringList", "eTypeSP_DPStringList" },
+		{ "SP_DPInt32List",  "eTypeSP_DPInt32List" },
+		{ "SP_DPUInt32List", "eTypeSP_DPUInt32List" },
+		{ "SP_DPInt64List",  "eTypeSP_DPInt64List" },
+		{ "SP_DPUInt64List", "eTypeSP_DPUInt64List" },
 
 		{ NULL, NULL }
 	};

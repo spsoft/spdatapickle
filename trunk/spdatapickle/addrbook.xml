@@ -13,20 +13,10 @@
 		<field id="3" name="Nickname" type="*char" required="0" />
 	</struct>
 
-	<struct name="Buffer">
-		<field id="1" name="Size" type="int32" />
-		<field id="2" name="Buffer" type="*char" referto="Size" />
-	</struct>
-
-	<struct name="LuckNumber">
-		<field id="1" name="Count" type="int16" />
-		<field id="2" name="List"  type="int16" arraysize="10" referto="Count" />
-	</struct>
-
 	<struct name="Contact">
 		<field id="1" name="Name"   type="*char" />
 
-		<field id="2" name="Image" type="Buffer" />
+		<field id="2" name="Image"  type="SP_DPBuffer" />
 
 		<field id="3" name="EmailList"  type="*Email" referto="EmailCount" />
 		<field id="4" name="EmailCount" type="int32" required="0" />
@@ -34,7 +24,7 @@
 		<field id="5" name="PhoneCount" type="int32" />
 		<field id="6" name="PhoneList" type="*PhoneNumber" referto="PhoneCount" />
 
-		<field id="7" name="LuckNumber" type="LuckNumber" />
+		<field id="7" name="LuckNumber" type="SP_DPInt32List" />
 	</struct>
 
 </metainfo>

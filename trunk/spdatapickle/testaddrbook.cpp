@@ -6,6 +6,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <assert.h>
 
 #include "dp_xyzaddrbook.hpp"
 
@@ -109,6 +110,7 @@ void initContact( XYZContact_t * contact )
 		contact->mPhoneList = list;
 	}
 
+	contact->mLuckNumber.mList = (int*)calloc( sizeof( int ), 4 );
 	contact->mLuckNumber.mCount = 4;
 	{
 		contact->mLuckNumber.mList[0] = 16;
@@ -191,6 +193,32 @@ void testUnpickle( SP_DataPickle * pickle )
 	alloc.free( &org, sizeof( org ), eTypeXYZContact );
 }
 
+void testDeepCopy()
+{
+	SP_DPAlloc alloc( gXYZAddrbookMetaInfo );
+
+	SP_XmlPickle pickle( gXYZAddrbookMetaInfo );
+
+	SP_XmlStringBuffer orgBuffer;
+	XYZContact_t org;
+	{
+		initContact( &org );
+		pickle.pickle( &org, sizeof( org ), eTypeXYZContact, &orgBuffer );
+	}
+
+	SP_XmlStringBuffer contactBuffer;
+	XYZContact_t contact;
+	{
+		alloc.deepCopy( &org, sizeof( org ), eTypeXYZContact, &contact, sizeof( contact ) );
+		pickle.pickle( &contact, sizeof( contact ), eTypeXYZContact, &contactBuffer );
+	}
+
+	assert( 0 == memcmp( orgBuffer.getBuffer(), contactBuffer.getBuffer(), orgBuffer.getSize() ) );
+
+	alloc.free( &contact, sizeof( contact ), eTypeXYZContact );
+	alloc.free( &org, sizeof( org ), eTypeXYZContact );
+}
+
 int main( int argc, char * argv[] )
 {
 	if( argc < 2 ) {
@@ -220,6 +248,8 @@ int main( int argc, char * argv[] )
 	testContact( pickle );
 
 	testUnpickle( pickle );
+
+	testDeepCopy();
 
 	return 0;
 }

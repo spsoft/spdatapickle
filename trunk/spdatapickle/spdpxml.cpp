@@ -79,6 +79,8 @@ int SP_DPXmlUtils :: parse( const char * xmlFile, SP_DPSyntaxTree * syntaxTree )
 
 	const SP_XmlNodeList * children = root->getChildren();
 	for( int i = 0; i < children->getLength(); i++ ) {
+		if( SP_XmlNode::eELEMENT != children->get(i)->getType() ) continue;
+
 		SP_DPSyntaxStruct structure;
 		if( 0 == parseStruct( children->get(i), &structure ) ) {
 			syntaxTree->getStructList()->push_back( structure );

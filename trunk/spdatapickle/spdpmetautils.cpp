@@ -92,7 +92,7 @@ SP_DPMetaField_t * SP_DPMetaUtils :: find( SP_DPMetaStruct_t * metaStruct, const
 	return ret;
 }
 
-int SP_DPMetaUtils :: getReferCount( void * structure,
+int SP_DPMetaUtils :: getReferCount( const void * structure,
 		SP_DPMetaStruct_t * metaStruct, SP_DPMetaField_t * field )
 {
 	int ret = -1;

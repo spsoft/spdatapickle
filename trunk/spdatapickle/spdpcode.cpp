@@ -8,6 +8,8 @@
 #include "spdpcode.hpp"
 #include "spdpsyntax.hpp"
 #include "spdpname.hpp"
+#include "spdpbuiltin.hpp"
+#include "spdpmetainfo.hpp"
 
 #include "spjson/spjsonport.hpp"
 
@@ -40,6 +42,7 @@ void SP_DPCodeRender :: generateHeader( SP_DPSyntaxTree * syntaxTree, FILE * wri
 	fprintf( writer, "\n" );
 
 	fprintf( writer, "#include \"spdatapickle/spdpmetainfo.hpp\"\n" );
+	fprintf( writer, "#include \"spdatapickle/spdpbuiltin.hpp\"\n" );
 	fprintf( writer, "#include \"spjson/spjsonport.hpp\"\n" );
 	fprintf( writer, "\n" );
 
@@ -220,11 +223,12 @@ void SP_DPCodeRender :: generateMetaInfo( SP_DPSyntaxTree * syntaxTree, FILE * w
 				"\t\tSP_DP_ARRAY_SIZE(gMeta%s), gMeta%s }",
 				ename, sit->getName(), sname, sname, sname );
 
-		if( slist->end() == ( sit + 1 ) ) {
-			fprintf( writer, "\n" );
-		} else {
-			fprintf( writer, ",\n" );
-		}
+		fprintf( writer, ",\n" );
+	}
+
+	for( int i = 0; i < gSP_DPBuiltinMetaInfo->mStructCount; i++ ) {
+		fprintf( writer, "\tgSP_DPBuiltinMetaInfo->mStructList[%d]", i );
+		fprintf( writer, "%s", ( gSP_DPBuiltinMetaInfo->mStructCount - 1 ) == i ? "\n" : ",\n" );
 	}
 
 	fprintf( writer, "};\n" );
