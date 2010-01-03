@@ -68,5 +68,24 @@
 		<field id="131" name="field131"  type="int32" required="0" />
 	</struct>
 
+	<struct name="BuiltinMix">
+		<field id="1"  name="Char"       type="SP_DPChar" />
+		<field id="2"  name="Int16"      type="SP_DPInt16" />
+		<field id="3"  name="UInt16"     type="SP_DPUInt16" />
+		<field id="4"  name="Int32"      type="SP_DPInt32" />
+		<field id="5"  name="UInt32"     type="SP_DPUInt32" />
+		<field id="6"  name="Int64"      type="SP_DPInt64" />
+		<field id="7"  name="UInt64"     type="SP_DPUInt64" />
+		<field id="8"  name="Float"      type="SP_DPFloat" />
+		<field id="9"  name="Double"     type="SP_DPDouble" />
+		<field id="10" name="String"     type="SP_DPString" />
+		<field id="11" name="Buffer"     type="SP_DPBuffer" />
+		<field id="12" name="StringList" type="SP_DPStringList" />
+		<field id="13" name="Int32List"  type="SP_DPInt32List" />
+		<field id="14" name="UInt32List" type="SP_DPUInt32List" />
+		<field id="15" name="Int64List"  type="SP_DPInt64List" />
+		<field id="16" name="UInt64List" type="SP_DPUInt64List" />
+	</struct>
+
 </metainfo>
 
