@@ -28,6 +28,8 @@ public:
 
 	virtual const char * getStructBaseName( const char * name, char * structName, int size );
 
+	virtual const char * getPickleName( const char * name, char * pickleName, int size );
+
 public:
 
 	static char * toLower ( register char *s );
