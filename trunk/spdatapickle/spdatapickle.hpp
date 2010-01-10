@@ -15,6 +15,9 @@ typedef struct tagSP_DPMetaStruct SP_DPMetaStruct_t;
 class SP_DataPickle
 {
 public:
+	enum { eXml = 0, eXmlRpc = 1, eJson = 2, eProtoBuf = 3 };
+
+public:
 	SP_DataPickle( SP_DPMetaInfo_t * metaInfo );
 	virtual ~SP_DataPickle();
 

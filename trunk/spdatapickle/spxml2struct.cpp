@@ -72,7 +72,7 @@ int main( int argc, char * argv[] )
 	{
 		snprintf( filename, sizeof( filename ), "%s/%s.cpp", outputDir, tmp );
 		FILE * fp = fopen( filename, "w" );
-		codeRender.generateMetadata( &syntaxTree, fp );
+		codeRender.generateCpp( &syntaxTree, fp );
 		fclose( fp );
 
 		printf( "spxml2struct: Build %s ... done\n", filename );

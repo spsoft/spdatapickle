@@ -57,23 +57,22 @@ static void test( const char * filename, int loops )
 	fclose ( fp );
 	source[ aStat.st_size ] = '\0';
 
-	SP_ProtoBufPickle pbPickle( gXYZBenchmarkMetaInfo );
+	SP_XmlStringBuffer buffer;
+	buffer.attach( source, aStat.st_size );
 
-	SP_DPAlloc alloc( gXYZBenchmarkMetaInfo );
+	XYZBenchmarkPickle pbPickle( SP_DataPickle::eProtoBuf );
 
 	for( int i = 0; i < loops; i++ ) {
 
 		XYZSpeedMessage1_t msg1;
 		memset( &msg1, 0, sizeof( msg1 ) );
 
-		int ret = pbPickle.unpickle( source, aStat.st_size, eTypeXYZSpeedMessage1, &msg1, sizeof( msg1 ) );
+		int ret = pbPickle.unpickle( &buffer, &msg1 );
 
 		if( 0 != ret ) printf( "unpickle %d\n", ret );
 
-		alloc.free( &msg1, sizeof( msg1 ), eTypeXYZSpeedMessage1 );
+		pbPickle.freeFields( msg1 );
 	}
-
-	free( source );
 }
 
 void initBuiltin( XYZBuiltinMix_t * mix )
@@ -146,46 +145,44 @@ void testBuiltin()
 
 	SP_DPMetaUtils::dump( gXYZBenchmarkMetaInfo );
 
-	SP_XmlPickle      xmlPickle( gXYZBenchmarkMetaInfo );
+	XYZBenchmarkPickle xmlPickle( SP_DataPickle::eXml );
 	{
 		SP_XmlStringBuffer buffer;
-		xmlPickle.pickle( &mix, sizeof( mix ), eTypeXYZBuiltinMix, &buffer );
+		xmlPickle.pickle( &mix, &buffer );
 		//printf( "xml:\n\n%s\n\n", buffer.getBuffer() );
 
-		xmlPickle.unpickle( buffer.getBuffer(), buffer.getSize(),
-				eTypeXYZBuiltinMix, &newMix, sizeof( newMix ) );
+		xmlPickle.unpickle( &buffer, &newMix );
 
 		SP_XmlStringBuffer newBuffer;
-		xmlPickle.pickle( &newMix, sizeof( newMix ), eTypeXYZBuiltinMix, &newBuffer );
+		xmlPickle.pickle( &newMix, &newBuffer );
 
 		assert( 0 == ( strcasecmp( newBuffer.getBuffer(), buffer.getBuffer() ) ) );
 	}
 
-	SP_XmlRpcPickle   xmlRpcPickle( gXYZBenchmarkMetaInfo );
+	XYZBenchmarkPickle xmlRpcPickle( SP_DataPickle::eXmlRpc );
 	{
 		SP_XmlStringBuffer buffer;
-		xmlRpcPickle.pickle( &mix, sizeof( mix ), eTypeXYZBuiltinMix, &buffer );
+		xmlRpcPickle.pickle( &mix, &buffer );
 		//printf( "xmlrpc:\n\n%s\n\n", buffer.getBuffer() );
 	}
 
-	SP_JsonPickle     jsonPickle( gXYZBenchmarkMetaInfo );
+	XYZBenchmarkPickle jsonPickle( SP_DataPickle::eJson );
 	{
 		SP_XmlStringBuffer buffer;
-		jsonPickle.pickle( &mix, sizeof( mix ), eTypeXYZBuiltinMix, &buffer );
+		jsonPickle.pickle( &mix, &buffer );
 		//printf( "json:\n\n%s\n\n", buffer.getBuffer() );
 	}
 
-	SP_ProtoBufPickle pbPickle( gXYZBenchmarkMetaInfo );
+	XYZBenchmarkPickle pbPickle( SP_DataPickle::eProtoBuf );
 	{
 		SP_XmlStringBuffer buffer;
-		pbPickle.pickle( &mix, sizeof( mix ), eTypeXYZBuiltinMix, &buffer );
+		pbPickle.pickle( &mix, &buffer );
 
 		//printf( "protobuf:\n\n" );
 		//printBuffer( &buffer );
 	}
 
-	SP_DPAlloc alloc( gXYZBenchmarkMetaInfo );
-	alloc.free( &mix, sizeof( mix ), eTypeXYZBuiltinMix );
+	pbPickle.freeFields( mix );
 }
 
 int main( int argc, char * argv[] )

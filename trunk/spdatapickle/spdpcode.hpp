@@ -22,7 +22,7 @@ public:
 
 	void generateHeader( SP_DPSyntaxTree * syntaxTree, FILE * writer );
 
-	void generateMetadata( SP_DPSyntaxTree * syntaxTree, FILE * writer );
+	void generateCpp( SP_DPSyntaxTree * syntaxTree, FILE * writer );
 
 private:
 
@@ -35,6 +35,9 @@ private:
 	void generateMetaField( SP_DPSyntaxStruct * structure, FILE * writer );
 
 	void generateMetaInfo( SP_DPSyntaxTree * syntaxTree, FILE * writer );
+
+	void generatePickleDefine( SP_DPSyntaxTree * syntaxTree, FILE * writer );
+	void generatePickleImpl( SP_DPSyntaxTree * syntaxTree, FILE * writer );
 
 private:
 	SP_DPNameRender * mNameRender;

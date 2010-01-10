@@ -215,6 +215,13 @@ const char * SP_DPNameRender :: getStructBaseName( const char * name, char * str
 	return structName;
 }
 
+const char * SP_DPNameRender :: getPickleName( const char * name, char * pickleName, int size )
+{
+	snprintf( pickleName, size, "%s%c%sPickle", mPrefix, toupper( *name ), name + 1 );
+
+	return pickleName;
+}
+
 char * SP_DPNameRender :: toLower ( register char *s )
 {
 	register char *ret = s;

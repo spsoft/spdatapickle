@@ -41,9 +41,7 @@ void SP_DPCodeRender :: generateHeader( SP_DPSyntaxTree * syntaxTree, FILE * wri
 	fprintf( writer, "#endif\n" );
 	fprintf( writer, "\n" );
 
-	fprintf( writer, "#include \"spdatapickle/spdpmetainfo.hpp\"\n" );
-	fprintf( writer, "#include \"spdatapickle/spdpbuiltin.hpp\"\n" );
-	fprintf( writer, "#include \"spjson/spjsonport.hpp\"\n" );
+	fprintf( writer, "#include \"spdatapickle/spdplib.hpp\"\n" );
 	fprintf( writer, "\n" );
 
 	generateMetaEnum( syntaxTree, writer );
@@ -63,6 +61,10 @@ void SP_DPCodeRender :: generateHeader( SP_DPSyntaxTree * syntaxTree, FILE * wri
 
 	fprintf( writer, "typedef struct tagSP_DPMetaInfo SP_DPMetaInfo_t;\n" );
 	fprintf( writer, "extern SP_DPMetaInfo_t * g%sMetaInfo;\n", name );
+
+	fprintf( writer, "\n" );
+
+	generatePickleDefine( syntaxTree, writer );
 
 	fprintf( writer, "\n" );
 	fprintf( writer, "#ifdef __cplusplus\n" );
@@ -110,7 +112,7 @@ void SP_DPCodeRender :: generateField( SP_DPSyntaxField * field, FILE * writer )
 	}
 }
 
-void SP_DPCodeRender :: generateMetadata( SP_DPSyntaxTree * syntaxTree, FILE * writer )
+void SP_DPCodeRender :: generateCpp( SP_DPSyntaxTree * syntaxTree, FILE * writer )
 {
 	char filename[ 128 ] = { 0 };
 	mNameRender->getFileName( syntaxTree->getName(), filename, sizeof( filename ) );
@@ -121,8 +123,11 @@ void SP_DPCodeRender :: generateMetadata( SP_DPSyntaxTree * syntaxTree, FILE * w
 	fprintf( writer, "*/\n" );
 	fprintf( writer, "\n" );
 
+	fprintf( writer, "#include <stdio.h>\n" );
+	fprintf( writer, "\n" );
 	fprintf( writer, "#include \"%s.hpp\"\n", filename );
-	fprintf( writer, "#include \"spdatapickle/spdpmetainfo.hpp\"\n" );
+	fprintf( writer, "\n" );
+	fprintf( writer, "#include \"spdatapickle/spdplib.hpp\"\n" );
 	fprintf( writer, "\n" );
 
 	SP_DPSyntaxStructVector * slist = syntaxTree->getStructList();
@@ -133,6 +138,8 @@ void SP_DPCodeRender :: generateMetadata( SP_DPSyntaxTree * syntaxTree, FILE * w
 	}
 
 	generateMetaInfo( syntaxTree, writer );
+
+	generatePickleImpl( syntaxTree, writer );
 }
 
 void SP_DPCodeRender :: generateMetaEnum( SP_DPSyntaxTree * syntaxTree, FILE * writer )
@@ -149,7 +156,12 @@ void SP_DPCodeRender :: generateMetaEnum( SP_DPSyntaxTree * syntaxTree, FILE * w
 				mNameRender->getStructBaseName( sit->getName(), tmp, sizeof( tmp ) ) );
 
 		if( slist->begin() == sit ) {
-			fprintf( writer, "\t%s = eTypeSPDPUserDefine + 1", name );
+			if( 0 == strcasecmp( syntaxTree->getName(), "builtin" )
+					&& 0 == strcasecmp( syntaxTree->getPrefix(), "SP_DP" ) ) {
+				fprintf( writer, "\t%s = eTypeSPDPBuiltin + 1", name );
+			} else {
+				fprintf( writer, "\t%s = eTypeSPDPUserDefine + 1", name );
+			}
 		} else {
 			fprintf( writer, "\t%s", name );
 		}
@@ -248,6 +260,133 @@ void SP_DPCodeRender :: generateMetaInfo( SP_DPSyntaxTree * syntaxTree, FILE * w
 	fprintf( writer, "\n" );
 
 	fprintf( writer, "SP_DPMetaInfo_t * g%sMetaInfo = &gMeta%s;\n", name, name );
+
+	fprintf( writer, "\n" );
+}
+
+void SP_DPCodeRender :: generatePickleDefine( SP_DPSyntaxTree * syntaxTree, FILE * writer )
+{
+	char pickleName[ 128 ] = { 0 };
+	mNameRender->getPickleName( syntaxTree->getName(), pickleName, sizeof( pickleName ) );
+
+	fprintf( writer, "class SP_XmlStringBuffer;\n" );
+	fprintf( writer, "class SP_DataPickle;\n" );
+	fprintf( writer, "\n" );
+
+	fprintf( writer, "class %s {\n", pickleName );
+	fprintf( writer, "public:\n" );
+	fprintf( writer, "\t%s( int pickleType );\n", pickleName );
+	fprintf( writer, "\t~%s();\n", pickleName );
+	fprintf( writer, "\n" );
+
+	SP_DPSyntaxStructVector * slist = syntaxTree->getStructList();
+
+	SP_DPSyntaxStructVector::iterator sit = slist->begin();
+
+	for( ; slist->end() != sit; ++sit ) {
+		char structName[ 128 ] = { 0 };
+		mNameRender->getStructBaseName( sit->getName(), structName, sizeof( structName ) );
+
+		fprintf( writer, "\tint pickle( %s_t * structure, SP_XmlStringBuffer * buffer );\n", structName );
+		fprintf( writer, "\tint unpickle( SP_XmlStringBuffer * buffer, %s_t * structure );\n", structName );
+		fprintf( writer, "\n" );
+	}
+
+	fprintf( writer, "\n" );
+
+	fprintf( writer, "public:\n" );
+
+	sit = slist->begin();
+
+	for( ; slist->end() != sit; ++sit ) {
+		char structName[ 128 ] = { 0 };
+		mNameRender->getStructBaseName( sit->getName(), structName, sizeof( structName ) );
+
+		fprintf( writer, "\tstatic int freeFields( %s_t & structure );\n", structName );
+	}
+
+	fprintf( writer, "\n" );
+
+	fprintf( writer, "private:\n" );
+	fprintf( writer, "\tSP_DataPickle * mImpl;\n" );
+	fprintf( writer, "};\n" );
+	fprintf( writer, "\n" );
+}
+
+void SP_DPCodeRender :: generatePickleImpl( SP_DPSyntaxTree * syntaxTree, FILE * writer )
+{
+	char pickleName[ 128 ] = { 0 };
+	mNameRender->getPickleName( syntaxTree->getName(), pickleName, sizeof( pickleName ) );
+
+	char tmp[ 128 ] = { 0 }, metaName[ 128 ] = { 0 };
+	mNameRender->getStructBaseName( syntaxTree->getName(), tmp, sizeof( tmp ) );
+
+	snprintf( metaName, sizeof( metaName ), "g%sMetaInfo", tmp );
+
+	fprintf( writer, "%s :: %s( int pickleType )\n", pickleName, pickleName );
+	fprintf( writer, "{\n" );
+	fprintf( writer, "\tmImpl = NULL;\n" );
+	fprintf( writer, "\tif( SP_DataPickle::eXml == pickleType ) {\n" );
+	fprintf( writer, "\t\tmImpl = new SP_XmlPickle( %s );\n", metaName );
+	fprintf( writer, "\t} else if( SP_DataPickle::eXmlRpc == pickleType ) {\n" );
+	fprintf( writer, "\t\tmImpl = new SP_XmlRpcPickle( %s );\n", metaName );
+	fprintf( writer, "\t} else if( SP_DataPickle::eJson == pickleType ) {\n" );
+	fprintf( writer, "\t\tmImpl = new SP_JsonPickle( %s );\n", metaName );
+	fprintf( writer, "\t} else if( SP_DataPickle::eProtoBuf == pickleType ) {\n" );
+	fprintf( writer, "\t\tmImpl = new SP_ProtoBufPickle( %s );\n", metaName );
+	fprintf( writer, "\t}\n" );
+	fprintf( writer, "}\n" );
+
+	fprintf( writer, "%s :: ~%s()\n", pickleName, pickleName );
+	fprintf( writer, "{\n" );
+	fprintf( writer, "\tif( NULL != mImpl ) delete mImpl, mImpl = NULL;\n" );
+	fprintf( writer, "}\n" );
+	fprintf( writer, "\n" );
+
+	SP_DPSyntaxStructVector * slist = syntaxTree->getStructList();
+
+	SP_DPSyntaxStructVector::iterator sit = slist->begin();
+
+	for( ; slist->end() != sit; ++sit ) {
+		char structName[ 128 ] = { 0 }, typeEnum[ 128 ] = { 0 };
+		mNameRender->getStructBaseName( sit->getName(), structName, sizeof( structName ) );
+		mNameRender->getTypeEnum( sit->getName(), typeEnum, sizeof( typeEnum ) );
+
+		fprintf( writer, "int %s :: pickle( %s_t * structure, SP_XmlStringBuffer * buffer )\n",
+				pickleName, structName );
+		fprintf( writer, "{\n" );
+		fprintf( writer, "\tif( NULL == mImpl ) return -1;\n" );
+		fprintf( writer, "\treturn mImpl->pickle( structure, sizeof( %s_t ),\n"
+				"\t\t%s, buffer );\n", structName, typeEnum );
+		fprintf( writer, "}\n" );
+		fprintf( writer, "\n" );
+		fprintf( writer, "int %s :: unpickle( SP_XmlStringBuffer * buffer, %s_t * structure )\n",
+				pickleName, structName );
+		fprintf( writer, "{\n" );
+		fprintf( writer, "\tif( NULL == mImpl ) return -1;\n" );
+		fprintf( writer, "\treturn mImpl->unpickle( buffer->getBuffer(), buffer->getSize(),\n"
+				"\t\t%s, structure, sizeof( %s_t ) );\n",
+				typeEnum, structName );
+		fprintf( writer, "}\n" );
+		fprintf( writer, "\n" );
+	}
+
+	fprintf( writer, "\n" );
+
+	sit = slist->begin();
+
+	for( ; slist->end() != sit; ++sit ) {
+		char structName[ 128 ] = { 0 }, typeEnum[ 128 ] = { 0 };
+		mNameRender->getStructBaseName( sit->getName(), structName, sizeof( structName ) );
+		mNameRender->getTypeEnum( sit->getName(), typeEnum, sizeof( typeEnum ) );
+
+		fprintf( writer, "int %s :: freeFields( %s_t & structure )\n", pickleName, structName );
+		fprintf( writer, "{\n" );
+		fprintf( writer, "\tSP_DPAlloc alloc( %s );\n", metaName  );
+		fprintf( writer, "\treturn alloc.free( &structure, sizeof( structure ), %s );\n", typeEnum );
+		fprintf( writer, "}\n" );
+		fprintf( writer, "\n" );
+	}
 
 	fprintf( writer, "\n" );
 }
