@@ -10,12 +10,7 @@
 
 #include "dp_xyzaddrbook.hpp"
 
-#include "spdpmetautils.hpp"
-#include "spxmlpickle.hpp"
-#include "spxmlrpcpickle.hpp"
-#include "spjsonpickle.hpp"
-#include "sppbpickle.hpp"
-#include "spdpalloc.hpp"
+#include "spdatapickle/spdpmetautils.hpp"
 
 #include "spxml/spxmlutils.hpp"
 #include "spjson/spjsonutils.hpp"
@@ -40,7 +35,7 @@ void printBuffer( SP_XmlStringBuffer * buffer )
 	}
 }
 
-void testEmail( SP_DataPickle * pickle )
+void testEmail( XYZAddrbookPickle * pickle )
 {
 	XYZEmail_t email;
 	memset( &email, 0, sizeof( email ) );
@@ -50,15 +45,14 @@ void testEmail( SP_DataPickle * pickle )
 
 	SP_XmlStringBuffer buffer;
 
-	pickle->pickle( &email, sizeof( email ), eTypeXYZEmail, &buffer );
+	pickle->pickle( &email, &buffer );
 
 	printBuffer( &buffer );
 
-	SP_DPAlloc alloc( gXYZAddrbookMetaInfo );
-	alloc.free( &email, sizeof( email ), eTypeXYZEmail );
+	pickle->freeFields( email );
 }
 
-void testPhoneNumber( SP_DataPickle * pickle )
+void testPhoneNumber( XYZAddrbookPickle * pickle )
 {
 	XYZPhoneNumber_t phoneNumber;
 	memset( &phoneNumber, 0, sizeof( phoneNumber ) );
@@ -68,7 +62,7 @@ void testPhoneNumber( SP_DataPickle * pickle )
 	phoneNumber.mContent = strdup( "12345678" );
 
 	SP_XmlStringBuffer buffer;
-	pickle->pickle( &phoneNumber, sizeof( phoneNumber ), eTypeXYZPhoneNumber, &buffer );
+	pickle->pickle( &phoneNumber, &buffer );
 
 	printBuffer( &buffer );
 
@@ -120,7 +114,7 @@ void initContact( XYZContact_t * contact )
 	}
 }
 
-void testContact( SP_DataPickle * pickle )
+void testContact( XYZAddrbookPickle * pickle )
 {
 	XYZContact_t contact;
 
@@ -128,15 +122,14 @@ void testContact( SP_DataPickle * pickle )
 
 	SP_XmlStringBuffer buffer;
 
-	pickle->pickle( &contact, sizeof( contact ), eTypeXYZContact, &buffer );
+	pickle->pickle( &contact, &buffer );
 
 	printBuffer( &buffer );
 
-	SP_DPAlloc alloc( gXYZAddrbookMetaInfo );
-	alloc.free( &contact, sizeof( contact ), eTypeXYZContact );
+	pickle->freeFields( contact );
 }
 
-void testUnpickle( SP_DataPickle * pickle )
+void testUnpickle( XYZAddrbookPickle * pickle )
 {
 	XYZContact_t org;
 
@@ -144,15 +137,14 @@ void testUnpickle( SP_DataPickle * pickle )
 
 	SP_XmlStringBuffer buffer;
 
-	pickle->pickle( &org, sizeof( org ), eTypeXYZContact, &buffer );
+	pickle->pickle( &org, &buffer );
 
 	printBuffer( &buffer );
 
 	XYZContact_t contact;
 	memset( &contact, 0, sizeof( contact ) );
 
-	int ret = pickle->unpickle( buffer.getBuffer(), buffer.getSize(),
-			eTypeXYZContact, &contact, sizeof( contact ) );
+	int ret = pickle->unpickle( &buffer, &contact );
 
 	printf( "Unpickle %d\n\n", ret );
 
@@ -195,28 +187,26 @@ void testUnpickle( SP_DataPickle * pickle )
 
 void testDeepCopy()
 {
-	SP_DPAlloc alloc( gXYZAddrbookMetaInfo );
-
-	SP_XmlPickle pickle( gXYZAddrbookMetaInfo );
+	XYZAddrbookPickle pickle( SP_DataPickle::eXml );
 
 	SP_XmlStringBuffer orgBuffer;
 	XYZContact_t org;
 	{
 		initContact( &org );
-		pickle.pickle( &org, sizeof( org ), eTypeXYZContact, &orgBuffer );
+		pickle.pickle( &org, &orgBuffer );
 	}
 
 	SP_XmlStringBuffer contactBuffer;
 	XYZContact_t contact;
 	{
-		alloc.deepCopy( &org, sizeof( org ), eTypeXYZContact, &contact, sizeof( contact ) );
-		pickle.pickle( &contact, sizeof( contact ), eTypeXYZContact, &contactBuffer );
+		pickle.deepCopy( &org, &contact );
+		pickle.pickle( &contact, &contactBuffer );
 	}
 
 	assert( 0 == memcmp( orgBuffer.getBuffer(), contactBuffer.getBuffer(), orgBuffer.getSize() ) );
 
-	alloc.free( &contact, sizeof( contact ), eTypeXYZContact );
-	alloc.free( &org, sizeof( org ), eTypeXYZContact );
+	pickle.freeFields( contact );
+	pickle.freeFields( org );
 }
 
 int main( int argc, char * argv[] )
@@ -231,12 +221,12 @@ int main( int argc, char * argv[] )
 
 	SP_DPMetaUtils::dump( gXYZAddrbookMetaInfo );
 
-	SP_XmlPickle      xmlPickle( gXYZAddrbookMetaInfo );
-	SP_XmlRpcPickle   xmlRpcPickle( gXYZAddrbookMetaInfo );
-	SP_JsonPickle     jsonPickle( gXYZAddrbookMetaInfo );
-	SP_ProtoBufPickle pbPickle( gXYZAddrbookMetaInfo );
+	XYZAddrbookPickle xmlPickle( SP_DataPickle::eXml );
+	XYZAddrbookPickle xmlRpcPickle( SP_DataPickle::eXmlRpc );
+	XYZAddrbookPickle jsonPickle( SP_DataPickle::eJson );
+	XYZAddrbookPickle pbPickle( SP_DataPickle::eProtoBuf );
 
-	SP_DataPickle * pickle = &xmlPickle;
+	XYZAddrbookPickle * pickle = &xmlPickle;
 	if( 1 == type ) pickle = &xmlRpcPickle;
 	if( 2 == type ) pickle = &jsonPickle;
 	if( 3 == type ) pickle = &pbPickle;

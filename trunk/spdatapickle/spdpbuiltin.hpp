@@ -12,9 +12,7 @@
 extern "C" {
 #endif
 
-#include "spdatapickle/spdpmetainfo.hpp"
-#include "spdatapickle/spdpbuiltin.hpp"
-#include "spjson/spjsonport.hpp"
+#include "spdatapickle/spdplib.hpp"
 
 enum {
 	eTypeSP_DPChar = eTypeSPDPBuiltin + 1,
@@ -173,21 +171,53 @@ public:
 
 public:
 	static int freeFields( SP_DPChar_t & structure );
+	static int deepCopy( const SP_DPChar_t * src, SP_DPChar_t * dest );
+
 	static int freeFields( SP_DPInt16_t & structure );
+	static int deepCopy( const SP_DPInt16_t * src, SP_DPInt16_t * dest );
+
 	static int freeFields( SP_DPUInt16_t & structure );
+	static int deepCopy( const SP_DPUInt16_t * src, SP_DPUInt16_t * dest );
+
 	static int freeFields( SP_DPInt32_t & structure );
+	static int deepCopy( const SP_DPInt32_t * src, SP_DPInt32_t * dest );
+
 	static int freeFields( SP_DPUInt32_t & structure );
+	static int deepCopy( const SP_DPUInt32_t * src, SP_DPUInt32_t * dest );
+
 	static int freeFields( SP_DPInt64_t & structure );
+	static int deepCopy( const SP_DPInt64_t * src, SP_DPInt64_t * dest );
+
 	static int freeFields( SP_DPUInt64_t & structure );
+	static int deepCopy( const SP_DPUInt64_t * src, SP_DPUInt64_t * dest );
+
 	static int freeFields( SP_DPFloat_t & structure );
+	static int deepCopy( const SP_DPFloat_t * src, SP_DPFloat_t * dest );
+
 	static int freeFields( SP_DPDouble_t & structure );
+	static int deepCopy( const SP_DPDouble_t * src, SP_DPDouble_t * dest );
+
 	static int freeFields( SP_DPString_t & structure );
+	static int deepCopy( const SP_DPString_t * src, SP_DPString_t * dest );
+
 	static int freeFields( SP_DPStringList_t & structure );
+	static int deepCopy( const SP_DPStringList_t * src, SP_DPStringList_t * dest );
+
 	static int freeFields( SP_DPBuffer_t & structure );
+	static int deepCopy( const SP_DPBuffer_t * src, SP_DPBuffer_t * dest );
+
 	static int freeFields( SP_DPInt32List_t & structure );
+	static int deepCopy( const SP_DPInt32List_t * src, SP_DPInt32List_t * dest );
+
 	static int freeFields( SP_DPUInt32List_t & structure );
+	static int deepCopy( const SP_DPUInt32List_t * src, SP_DPUInt32List_t * dest );
+
 	static int freeFields( SP_DPInt64List_t & structure );
+	static int deepCopy( const SP_DPInt64List_t * src, SP_DPInt64List_t * dest );
+
 	static int freeFields( SP_DPUInt64List_t & structure );
+	static int deepCopy( const SP_DPUInt64List_t * src, SP_DPUInt64List_t * dest );
+
 
 private:
 	SP_DataPickle * mImpl;
