@@ -303,6 +303,9 @@ void SP_DPCodeRender :: generatePickleDefine( SP_DPSyntaxTree * syntaxTree, FILE
 		mNameRender->getStructBaseName( sit->getName(), structName, sizeof( structName ) );
 
 		fprintf( writer, "\tstatic int freeFields( %s_t & structure );\n", structName );
+		fprintf( writer, "\tstatic int deepCopy( const %s_t * src, %s_t * dest );\n",
+				structName, structName );
+		fprintf( writer, "\n" );
 	}
 
 	fprintf( writer, "\n" );
@@ -384,6 +387,13 @@ void SP_DPCodeRender :: generatePickleImpl( SP_DPSyntaxTree * syntaxTree, FILE *
 		fprintf( writer, "{\n" );
 		fprintf( writer, "\tSP_DPAlloc alloc( %s );\n", metaName  );
 		fprintf( writer, "\treturn alloc.free( &structure, sizeof( structure ), %s );\n", typeEnum );
+		fprintf( writer, "}\n" );
+		fprintf( writer, "\n" );
+		fprintf( writer, "int %s :: deepCopy( const %s_t * src, %s_t * dest )\n",
+				pickleName, structName, structName );
+		fprintf( writer, "{\n" );
+		fprintf( writer, "\tSP_DPAlloc alloc( %s );\n", metaName  );
+		fprintf( writer, "\treturn alloc.deepCopy( src, sizeof( *src ), %s, dest, sizeof( *dest ) );\n", typeEnum );
 		fprintf( writer, "}\n" );
 		fprintf( writer, "\n" );
 	}
