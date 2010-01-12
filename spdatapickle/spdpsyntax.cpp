@@ -138,6 +138,12 @@ SP_DPSyntaxTree :: ~SP_DPSyntaxTree()
 {
 }
 
+int SP_DPSyntaxTree :: isBuiltin()
+{
+	return 0 == strcasecmp( getName(), "builtin" )
+			&& 0 == strcasecmp( mPrefix, "SP_DP" );
+}
+
 void SP_DPSyntaxTree :: setDefineFile( const char * defineFile )
 {
 	SP_DP_STRCPY( mDefineFile, defineFile );

@@ -78,6 +78,8 @@ public:
 	SP_DPSyntaxTree();
 	~SP_DPSyntaxTree();
 
+	int isBuiltin();
+
 	void setDefineFile( const char * defineFile );
 	const char * getDefineFile() const;
 
