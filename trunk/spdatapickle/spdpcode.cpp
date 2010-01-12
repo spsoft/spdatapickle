@@ -156,8 +156,7 @@ void SP_DPCodeRender :: generateMetaEnum( SP_DPSyntaxTree * syntaxTree, FILE * w
 				mNameRender->getStructBaseName( sit->getName(), tmp, sizeof( tmp ) ) );
 
 		if( slist->begin() == sit ) {
-			if( 0 == strcasecmp( syntaxTree->getName(), "builtin" )
-					&& 0 == strcasecmp( syntaxTree->getPrefix(), "SP_DP" ) ) {
+			if( syntaxTree->isBuiltin() ) {
 				fprintf( writer, "\t%s = eTypeSPDPBuiltin + 1", name );
 			} else {
 				fprintf( writer, "\t%s = eTypeSPDPUserDefine + 1", name );
@@ -238,9 +237,11 @@ void SP_DPCodeRender :: generateMetaInfo( SP_DPSyntaxTree * syntaxTree, FILE * w
 		fprintf( writer, ",\n" );
 	}
 
-	for( int i = 0; i < gSP_DPBuiltinMetaInfo->mStructCount; i++ ) {
-		fprintf( writer, "\tgSP_DPBuiltinMetaInfo->mStructList[%d]", i );
-		fprintf( writer, "%s", ( gSP_DPBuiltinMetaInfo->mStructCount - 1 ) == i ? "\n" : ",\n" );
+	if( 0 == syntaxTree->isBuiltin() ) {
+		for( int i = 0; i < gSP_DPBuiltinMetaInfo->mStructCount; i++ ) {
+				fprintf( writer, "\tgSP_DPBuiltinMetaInfo->mStructList[%d]", i );
+				fprintf( writer, "%s", ( gSP_DPBuiltinMetaInfo->mStructCount - 1 ) == i ? "\n" : ",\n" );
+		}
 	}
 
 	fprintf( writer, "};\n" );
