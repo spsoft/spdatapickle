@@ -28,7 +28,11 @@ public:
 
 	virtual const char * getStructBaseName( const char * name, char * structName, int size );
 
+	virtual const char * getMetaInfoName( const char * name, char * metaName, int size );
+
 	virtual const char * getPickleName( const char * name, char * pickleName, int size );
+
+	int isBuiltinType( const char * type );
 
 public:
 

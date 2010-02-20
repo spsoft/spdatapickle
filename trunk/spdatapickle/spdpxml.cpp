@@ -65,7 +65,9 @@ int SP_DPXmlUtils :: parse( const char * xmlFile, SP_DPSyntaxTree * syntaxTree )
 	}
 
 	const char * prefix = root->getAttrValue( "prefix" );
-	const char * name = root->getAttrValue( "filename" );
+	const char * name = root->getAttrValue( "service" );
+
+	if( NULL == name ) name = root->getAttrValue( "filename" );
 
 	if( NULL == prefix || NULL == name ) {
 		fprintf( stderr, "Invalid xml file: prefix|name miss\n" );
@@ -82,11 +84,12 @@ int SP_DPXmlUtils :: parse( const char * xmlFile, SP_DPSyntaxTree * syntaxTree )
 		if( SP_XmlNode::eELEMENT != children->get(i)->getType() ) continue;
 
 		SP_DPSyntaxStruct structure;
-		if( 0 == parseStruct( children->get(i), &structure ) ) {
-			syntaxTree->getStructList()->push_back( structure );
+		ret = parseStruct( children->get(i), &structure );
+		if( ret >= 0 ) {
+			if( 0 == ret ) syntaxTree->getStructList()->push_back( structure );
+			ret = 0;
 		} else {
 			fprintf( stderr, "Invalid xml file: struct element\n" );
-			ret = -1;
 			break;
 		}
 	}
@@ -128,7 +131,7 @@ int SP_DPXmlUtils :: parseStruct( SP_XmlNode * xmlNode, SP_DPSyntaxStruct * stru
 
 	SP_XmlElementNode * element = (SP_XmlElementNode*)xmlNode;
 
-	if( 0 != strcmp( "struct", element->getName() ) ) return -1;
+	if( 0 != strcmp( "struct", element->getName() ) ) return 1;
 
 	const char * name = element->getAttrValue( "name" );
 	if( NULL == name ) return -1;

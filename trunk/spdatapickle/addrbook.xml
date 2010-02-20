@@ -1,5 +1,5 @@
 
-<metainfo prefix="XYZ" filename="addrbook">
+<metainfo prefix="XYZ" service="addrbook">
 
 	<struct name="PhoneNumber">
 		<field id="1" name="Type"    type="char" arraysize="10" />
@@ -26,6 +26,11 @@
 
 		<field id="7" name="LuckNumber" type="SP_DPInt32List" />
 	</struct>
+
+	<function name="getContact">
+		<request  type="SP_DPString"/>
+		<response type="Contact" />
+	</function>
 
 </metainfo>
 

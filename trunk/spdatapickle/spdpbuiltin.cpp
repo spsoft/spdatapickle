@@ -125,6 +125,15 @@ static SP_DPMetaField_t gMetaSP_DPUInt64List [] = {
 		"", sizeof(int32_t), sizeof(int32_t), 1 }
 };
 
+static SP_DPMetaField_t gMetaSP_DPRpcError [] = {
+	{ sizeof(SP_DPMetaField_t), 1, "code",
+		SP_DP_FIELD_OFFSET(SP_DPRpcError_t, mCode), eTypeSPDPInt32, 0, 1, 0,
+		"", sizeof(int32_t), sizeof(int32_t), 0 },
+	{ sizeof(SP_DPMetaField_t), 2, "message",
+		SP_DP_FIELD_OFFSET(SP_DPRpcError_t, mMessage), eTypeSPDPChar, 1, 1, 0,
+		"", sizeof(char *), sizeof(char), 0 }
+};
+
 static SP_DPMetaStruct_t gMetaSP_DPStructList [] = {
 	{ sizeof( SP_DPMetaStruct_t ), eTypeSP_DPChar, "Char", sizeof(SP_DPChar_t),
 		SP_DP_ARRAY_SIZE(gMetaSP_DPChar), gMetaSP_DPChar },
@@ -158,6 +167,8 @@ static SP_DPMetaStruct_t gMetaSP_DPStructList [] = {
 		SP_DP_ARRAY_SIZE(gMetaSP_DPInt64List), gMetaSP_DPInt64List },
 	{ sizeof( SP_DPMetaStruct_t ), eTypeSP_DPUInt64List, "UInt64List", sizeof(SP_DPUInt64List_t),
 		SP_DP_ARRAY_SIZE(gMetaSP_DPUInt64List), gMetaSP_DPUInt64List },
+	{ sizeof( SP_DPMetaStruct_t ), eTypeSP_DPRpcError, "RpcError", sizeof(SP_DPRpcError_t),
+		SP_DP_ARRAY_SIZE(gMetaSP_DPRpcError), gMetaSP_DPRpcError },
 };
 
 static SP_DPMetaInfo_t gMetaSP_DPBuiltin = {
@@ -408,6 +419,20 @@ int SP_DPBuiltinPickle :: unpickle( SP_XmlStringBuffer * buffer, SP_DPUInt64List
 		eTypeSP_DPUInt64List, structure, sizeof( SP_DPUInt64List_t ) );
 }
 
+int SP_DPBuiltinPickle :: pickle( SP_DPRpcError_t * structure, SP_XmlStringBuffer * buffer )
+{
+	if( NULL == mImpl ) return -1;
+	return mImpl->pickle( structure, sizeof( SP_DPRpcError_t ),
+		eTypeSP_DPRpcError, buffer );
+}
+
+int SP_DPBuiltinPickle :: unpickle( SP_XmlStringBuffer * buffer, SP_DPRpcError_t * structure )
+{
+	if( NULL == mImpl ) return -1;
+	return mImpl->unpickle( buffer->getBuffer(), buffer->getSize(),
+		eTypeSP_DPRpcError, structure, sizeof( SP_DPRpcError_t ) );
+}
+
 
 int SP_DPBuiltinPickle :: freeFields( SP_DPChar_t & structure )
 {
@@ -599,6 +624,18 @@ int SP_DPBuiltinPickle :: deepCopy( const SP_DPUInt64List_t * src, SP_DPUInt64Li
 {
 	SP_DPAlloc alloc( gSP_DPBuiltinMetaInfo );
 	return alloc.deepCopy( src, sizeof( *src ), eTypeSP_DPUInt64List, dest, sizeof( *dest ) );
+}
+
+int SP_DPBuiltinPickle :: freeFields( SP_DPRpcError_t & structure )
+{
+	SP_DPAlloc alloc( gSP_DPBuiltinMetaInfo );
+	return alloc.free( &structure, sizeof( structure ), eTypeSP_DPRpcError );
+}
+
+int SP_DPBuiltinPickle :: deepCopy( const SP_DPRpcError_t * src, SP_DPRpcError_t * dest )
+{
+	SP_DPAlloc alloc( gSP_DPBuiltinMetaInfo );
+	return alloc.deepCopy( src, sizeof( *src ), eTypeSP_DPRpcError, dest, sizeof( *dest ) );
 }
 
 

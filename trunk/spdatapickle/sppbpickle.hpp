@@ -23,9 +23,9 @@ public:
 
 	int pickle( void * structure, int size, int type, SP_ProtoBufEncoder * buffer );
 
-private:
-
 	int unpickle( SP_ProtoBufDecoder * decoder, int type, void * structure, int size );
+
+private:
 
 	int unpickleBaseType( void * root, SP_DPMetaStruct_t * metaStruct,
 			SP_DPMetaField_t * field, void * structure );

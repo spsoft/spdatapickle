@@ -1,5 +1,5 @@
 
-<metainfo prefix="SP_DP" filename="builtin">
+<metainfo prefix="SP_DP" service="builtin">
 
 	<struct name="Char">
 		<field name="Value" type="char" id="1" />
@@ -69,6 +69,11 @@
 	<struct name="UInt64List">
 		<field name="List" type="*uint64" id="1" referto="Count" />
 		<field name="Count" type="int32"  id="2" />
+	</struct>
+
+	<struct name="RpcError">
+		<field name="code"    type="int32"  id="1" />
+		<field name="message" type="*char"  id="2" />
 	</struct>
 
 </metainfo>
