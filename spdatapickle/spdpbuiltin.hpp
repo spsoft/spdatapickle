@@ -8,11 +8,11 @@
 #ifndef __dp_sp_dpbuiltin_hpp__
 #define __dp_sp_dpbuiltin_hpp__
 
+#include "spdatapickle/spdplib.hpp"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#include "spdatapickle/spdplib.hpp"
 
 enum {
 	eTypeSP_DPChar = eTypeSPDPBuiltin + 1,
@@ -30,7 +30,8 @@ enum {
 	eTypeSP_DPInt32List,
 	eTypeSP_DPUInt32List,
 	eTypeSP_DPInt64List,
-	eTypeSP_DPUInt64List
+	eTypeSP_DPUInt64List,
+	eTypeSP_DPRpcError
 };
 
 typedef struct tagSP_DPChar {
@@ -109,6 +110,11 @@ typedef struct tagSP_DPUInt64List {
 	int32_t mCount;
 } SP_DPUInt64List_t;
 
+typedef struct tagSP_DPRpcError {
+	int32_t mCode;
+	char * mMessage;
+} SP_DPRpcError_t;
+
 typedef struct tagSP_DPMetaInfo SP_DPMetaInfo_t;
 extern SP_DPMetaInfo_t * gSP_DPBuiltinMetaInfo;
 
@@ -168,6 +174,9 @@ public:
 	int pickle( SP_DPUInt64List_t * structure, SP_XmlStringBuffer * buffer );
 	int unpickle( SP_XmlStringBuffer * buffer, SP_DPUInt64List_t * structure );
 
+	int pickle( SP_DPRpcError_t * structure, SP_XmlStringBuffer * buffer );
+	int unpickle( SP_XmlStringBuffer * buffer, SP_DPRpcError_t * structure );
+
 
 public:
 	static int freeFields( SP_DPChar_t & structure );
@@ -217,6 +226,9 @@ public:
 
 	static int freeFields( SP_DPUInt64List_t & structure );
 	static int deepCopy( const SP_DPUInt64List_t * src, SP_DPUInt64List_t * dest );
+
+	static int freeFields( SP_DPRpcError_t & structure );
+	static int deepCopy( const SP_DPRpcError_t * src, SP_DPRpcError_t * dest );
 
 
 private:

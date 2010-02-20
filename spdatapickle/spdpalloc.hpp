@@ -28,5 +28,25 @@ private:
 	SP_DPMetaInfo_t * mMetaInfo;
 };
 
+template<typename N, class T>
+class SP_DPSmartStruct : public T
+{
+public:
+	SP_DPSmartStruct()
+	{
+		memset( (T*)this, 0, sizeof( T ) );
+	}
+
+	~SP_DPSmartStruct()
+	{
+		N::freeFields( *this );
+	}
+
+private:
+	// forbidden copy constructor and assignment operator
+	SP_DPSmartStruct( const SP_DPSmartStruct & );
+	SP_DPSmartStruct& operator=( const SP_DPSmartStruct & );
+};
+
 #endif
 

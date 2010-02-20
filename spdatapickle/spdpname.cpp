@@ -29,6 +29,39 @@ const char * SP_DPNameRender :: getFileName( const char * filename, char * name,
 	return name;
 }
 
+int SP_DPNameRender :: isBuiltinType( const char * type )
+{
+	static char * builtinTypes [] = {
+		"SP_DPChar",
+		"SP_DPInt16",
+		"SP_DPUInt16",
+		"SP_DPInt32",
+		"SP_DPUInt32",
+		"SP_DPInt64",
+		"SP_DPUInt64",
+		"SP_DPFloat",
+		"SP_DPDouble",
+		"SP_DPString",
+		"SP_DPBuffer",
+		"SP_DPStringList",
+		"SP_DPInt32List",
+		"SP_DPUInt32List",
+		"SP_DPInt64List",
+		"SP_DPUInt64List",
+		NULL
+	};
+
+	for( int i = 0; ; i++ ) {
+		if( NULL == builtinTypes[i] ) break;
+
+		if( 0 == strcmp( type, builtinTypes[i] ) ) {
+			return 1;
+		}
+	}
+
+	return 0;
+}
+
 const char * SP_DPNameRender :: getTypeRawName( const char * type, char * name, int size )
 {
 	typedef struct tagType2Name {
@@ -213,6 +246,13 @@ const char * SP_DPNameRender :: getStructBaseName( const char * name, char * str
 	snprintf( structName, size, "%s%c%s", mPrefix, toupper( *name ), name + 1 );
 
 	return structName;
+}
+
+const char * SP_DPNameRender :: getMetaInfoName( const char * name, char * metaName, int size )
+{
+	snprintf( metaName, size, "g%s%c%sMetaInfo", mPrefix, toupper( *name ), name + 1 );
+
+	return metaName;
 }
 
 const char * SP_DPNameRender :: getPickleName( const char * name, char * pickleName, int size )

@@ -21,9 +21,9 @@ public:
 
 	virtual int unpickle( const char * xml, int len, int type, void * structure, int size );
 
-private:
-
 	int unpickle( SP_XmlElementNode * root, int type, void * structure, int size );
+
+private:
 
 	int unpickleBaseType( SP_XmlElementNode * root, SP_DPMetaStruct_t * metaStruct,
 			SP_DPMetaField_t * field, void * structure );

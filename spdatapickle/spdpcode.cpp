@@ -36,12 +36,13 @@ void SP_DPCodeRender :: generateHeader( SP_DPSyntaxTree * syntaxTree, FILE * wri
 	fprintf( writer, "#ifndef __%s_hpp__\n", filename );
 	fprintf( writer, "#define __%s_hpp__\n", filename );
 	fprintf( writer, "\n" );
+
+	fprintf( writer, "#include \"spdatapickle/spdplib.hpp\"\n" );
+	fprintf( writer, "\n" );
+
 	fprintf( writer, "#ifdef __cplusplus\n" );
 	fprintf( writer, "extern \"C\" {\n" );
 	fprintf( writer, "#endif\n" );
-	fprintf( writer, "\n" );
-
-	fprintf( writer, "#include \"spdatapickle/spdplib.hpp\"\n" );
 	fprintf( writer, "\n" );
 
 	generateMetaEnum( syntaxTree, writer );

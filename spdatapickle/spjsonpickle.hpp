@@ -23,9 +23,9 @@ public:
 
 	int pickle( void * structure, int size, int type, SP_JsonStringBuffer * buffer );
 
-private:
-
 	int unpickle( SP_JsonNode * root, int type, void * structure, int size );
+
+private:
 
 	int unpickleBaseType( SP_JsonNode * root, SP_DPMetaStruct_t * metaStruct,
 			SP_DPMetaField_t * field, void * structure );

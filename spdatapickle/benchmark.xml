@@ -1,5 +1,5 @@
 
-<metainfo prefix="XYZ" filename="benchmark">
+<metainfo prefix="XYZ" service="benchmark">
 
 	<struct name="SpeedMessage1SubMessage">
 		<field id="1"   name="field1"    type="int32" required="0" />
