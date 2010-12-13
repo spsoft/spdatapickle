@@ -21,7 +21,7 @@ LIBOBJS = spdpbase64.o spdpmetainfo.o spdpalloc.o spdpmetautils.o \
 		spxmlrpcpickle.o spdpbuiltin.o
 
 TARGET =  libspdatapickle.so libspdatapickle.a \
-		spxml2struct testaddrbook testbenchmark
+		spxml2struct spxml2class testaddrbook testbenchmark
 
 #--------------------------------------------------------------------
 
@@ -36,7 +36,10 @@ libspdatapickle.a: $(LIBOBJS)
 spxml2struct: spxml2struct.o spdpxml.o spdpsyntax.o spdpname.o spdpcode.o
 	$(LINKER) $(LDFLAGS) $^ -L. -lspdatapickle -o $@
 
-testaddrbook: dp_xyzaddrbook.o testaddrbook.o
+spxml2class: spxml2class.o spdpxml.o spdpsyntax.o spdpname.o spdpclasscode.o
+	$(LINKER) $(LDFLAGS) $^ -L. -lspdatapickle -o $@
+
+testaddrbook: dp_xyzaddrbookclass.o dp_xyzaddrbook.o testaddrbook.o
 	$(LINKER) $(LDFLAGS) $^ -static -L. -lspdatapickle -lspxml -lspjson -lstdc++ -lm -o $@
 
 testbenchmark: dp_xyzbenchmark.o testbenchmark.o

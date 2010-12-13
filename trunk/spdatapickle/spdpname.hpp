@@ -16,6 +16,10 @@ public:
 
 	virtual const char * getFileName( const char * filename, char * name, int size );
 
+	virtual const char * getClassFileName( const char * filename, char * name, int size );
+
+public:
+
 	virtual const char * getTypeFullName( SP_DPSyntaxField * field, char * name, int size );
 
 	virtual const char * getTypeName( const char * type, char * name, int size );
@@ -33,6 +37,8 @@ public:
 	virtual const char * getPickleName( const char * name, char * pickleName, int size );
 
 	int isBuiltinType( const char * type );
+
+	int isBaseType( const char * type );
 
 public:
 

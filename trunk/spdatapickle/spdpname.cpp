@@ -23,7 +23,15 @@ SP_DPNameRender :: ~SP_DPNameRender()
 
 const char * SP_DPNameRender :: getFileName( const char * filename, char * name, int size )
 {
-	snprintf( name, size, "dp_%s%s", mPrefix, filename );
+	snprintf( name, size, "dp_%s%sstruct", mPrefix, filename );
+	toLower( name );
+
+	return name;
+}
+
+const char * SP_DPNameRender :: getClassFileName( const char * filename, char * name, int size )
+{
+	snprintf( name, size, "dp_%s%sclass", mPrefix, filename );
 	toLower( name );
 
 	return name;
@@ -55,6 +63,34 @@ int SP_DPNameRender :: isBuiltinType( const char * type )
 		if( NULL == builtinTypes[i] ) break;
 
 		if( 0 == strcmp( type, builtinTypes[i] ) ) {
+			return 1;
+		}
+	}
+
+	return 0;
+}
+
+int SP_DPNameRender :: isBaseType( const char * type )
+{
+	static char * baseTypes [] = {
+		"char",
+		"int16",
+		"uint16",
+		"int32",
+		"uint32",
+		"int64",
+		"uint64",
+		"float",
+		"double",
+		NULL
+	};
+
+	const char * realname = ( '*' == *type ? type + 1 : type );
+
+	for( int i = 0; ; i++ ) {
+		if( NULL == baseTypes[i] ) break;
+
+		if( 0 == strcmp( realname, baseTypes[i] ) ) {
 			return 1;
 		}
 	}
