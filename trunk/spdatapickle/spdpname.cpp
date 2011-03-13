@@ -277,9 +277,62 @@ const char * SP_DPNameRender :: getFieldName( const char * name, char * fieldNam
 	return fieldName;
 }
 
-const char * SP_DPNameRender :: getStructBaseName( const char * name, char * structName, int size )
+const char * SP_DPNameRender :: getParamName( const char * name, char * paramName, int size )
 {
-	snprintf( structName, size, "%s%c%s", mPrefix, toupper( *name ), name + 1 );
+	snprintf( paramName, size, "%c%s", tolower( *name ), name + 1 );
+
+	return paramName;
+}
+
+const char * SP_DPNameRender :: getStructBaseName( const char * type, char * structName, int size )
+{
+	static const char * builtinTypes [] = {
+		"SP_DPChar",
+		"SP_DPInt16",
+		"SP_DPUInt16",
+		"SP_DPInt32",
+		"SP_DPUInt32",
+		"SP_DPInt64",
+		"SP_DPUInt64",
+		"SP_DPFloat",
+		"SP_DPDouble",
+		"SP_DPString",
+		"SP_DPBuffer",
+		"SP_DPStringList",
+		"SP_DPInt32List",
+		"SP_DPUInt32List",
+		"SP_DPInt64List",
+		"SP_DPUInt64List",
+		NULL
+	};
+
+	if( '*' == *type ) type++;
+
+	int isBuiltinType = 0;
+
+	for( int i = 0; ; ++i ) {
+		const char * iter = builtinTypes[i];
+
+		if( NULL == iter ) break;
+
+		if( 0 == strcmp( type, iter ) ) {
+			isBuiltinType = 1;
+			break;
+		}
+	}
+
+	if( isBuiltinType ) {
+		snprintf( structName, size, "%s", type );
+	} else {
+		snprintf( structName, size, "%s%c%s", mPrefix, toupper( *type ), type + 1 );
+	}
+
+	return structName;
+}
+
+const char * SP_DPNameRender :: getStructFakeName( const char * name, char * structName, int size )
+{
+	snprintf( structName, size, "%s%c%s_Fake", mPrefix, toupper( *name ), name + 1 );
 
 	return structName;
 }

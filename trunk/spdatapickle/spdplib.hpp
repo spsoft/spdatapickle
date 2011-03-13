@@ -12,6 +12,8 @@
 #include "spdatapickle/spdpmetainfo.hpp"
 #include "spdatapickle/spdpalloc.hpp"
 #include "spdatapickle/spdpbuiltin.hpp"
+#include "spdatapickle/spdpvector.hpp"
+#include "spdatapickle/spdpbuiltinclass.hpp"
 
 #include "spxml/spxmlutils.hpp"
 #include "spjson/spjsonport.hpp"

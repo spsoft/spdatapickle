@@ -8,7 +8,7 @@
 #include <ctype.h>
 #include <assert.h>
 
-#include "dp_xyzaddrbook.hpp"
+#include "dp_xyzaddrbookstruct.hpp"
 
 #include "spdatapickle/spdpmetautils.hpp"
 
@@ -185,6 +185,121 @@ void testUnpickle( XYZAddrbookPickle * pickle )
 	alloc.free( &org, sizeof( org ), eTypeXYZContact );
 }
 
+//===================================================================
+
+class XYZEmail {
+public:
+	XYZEmail();
+	~XYZEmail();
+
+	XYZEmail( const XYZEmail & other );
+
+	XYZEmail( XYZEmail_t * impl );
+
+	void copyTo( XYZEmail_t * impl ) const;
+
+	XYZEmail & operator=( const XYZEmail & other );
+
+	XYZEmail_t * getImpl() const;
+
+	char * getType() const;
+
+	void setAddress( const char * mAddress );
+	const char * getAddress() const;
+
+	void setNickname( const char * mNickname );
+	const char * getNickname() const;
+
+private:
+	XYZEmail_t * mImpl;
+	int mOwner;
+};
+
+XYZEmail :: XYZEmail()
+{
+	mImpl = (XYZEmail_t*)calloc( sizeof( XYZEmail_t ), 1 );
+	mOwner = 1;
+}
+
+XYZEmail :: ~XYZEmail()
+{
+	if( mOwner ) {
+		XYZAddrbookPickle::freeFields( *mImpl );
+		free( mImpl );
+	}
+	mImpl = NULL;
+}
+
+XYZEmail :: XYZEmail( XYZEmail_t * impl )
+{
+	mImpl = impl;
+	mOwner = 0;
+}
+
+XYZEmail :: XYZEmail( const XYZEmail & other )
+{
+	mImpl = NULL;
+	operator=( other );
+}
+
+XYZEmail & XYZEmail :: operator=( const XYZEmail & other )
+{
+	if( NULL != mImpl )
+	{
+		XYZAddrbookPickle::freeFields( *mImpl );
+		free( mImpl );
+		mImpl = NULL;
+	}
+
+	mImpl = (XYZEmail_t*)calloc( sizeof( XYZEmail_t ), 1 );
+	mOwner = 1;
+
+	XYZAddrbookPickle::deepCopy( mImpl, other.mImpl );
+
+	return *this;
+}
+
+void XYZEmail :: copyTo( XYZEmail_t * impl ) const
+{
+	XYZAddrbookPickle::deepCopy( mImpl, impl );
+}
+
+XYZEmail_t * XYZEmail :: getImpl() const
+{
+	return mImpl;
+}
+
+char * XYZEmail :: getType() const
+{
+	return mImpl->mType;
+}
+
+void XYZEmail :: setAddress( const char * mAddress )
+{
+	if( mImpl->mAddress ) free( mImpl->mAddress );
+	mImpl->mAddress = NULL;
+	if( mAddress ) mImpl->mAddress = strdup( mAddress );
+}
+
+const char * XYZEmail :: getAddress() const
+{
+	return mImpl->mAddress;
+}
+
+void XYZEmail :: setNickname( const char * mNickname )
+{
+	if( mImpl->mNickname ) free( mImpl->mNickname );
+	mImpl->mNickname = NULL;
+	if( mNickname ) mImpl->mNickname = strdup( mNickname );
+}
+
+const char * XYZEmail :: getNickname() const
+{
+	return mImpl->mNickname;
+}
+
+//===================================================================
+
 void testDeepCopy()
 {
 	XYZAddrbookPickle pickle( SP_DataPickle::eXml );
@@ -209,6 +324,49 @@ void testDeepCopy()
 	pickle.freeFields( org );
 }
 
+void testVector()
+{
+	XYZAddrbookPickle pickle( SP_DataPickle::eXml );
+
+	XYZContact_t org;
+	initContact( &org );
+
+	SP_DPVector<XYZEmail_t, XYZEmail> emailList( & org.mEmailList, & org.mEmailCount, 0 );
+
+	printf( "count %d\n", emailList.getCount() );
+	for( int i = 0; i < emailList.getCount(); i++ ) {
+		printf( "#%d: %s\n", i, emailList.getItem(i)->getAddress() );
+	}
+
+	XYZEmail email;
+	email.setAddress( "school <school@foo.bar>" );
+
+	emailList.append( &email );
+
+	printf( "count %d\n", emailList.getCount() );
+	for( int i = 0; i < emailList.getCount(); i++ ) {
+		printf( "#%d: %s\n", i, emailList.getItem(i)->getAddress() );
+	}
+
+	pickle.freeFields( org );
+
+	{
+		printf( "test array\n" );
+
+		XYZEmail_t tmpList[2];
+		SP_DPVector<XYZEmail_t, XYZEmail> tmpVector( (XYZEmail_t**)&tmpList, NULL, 2 );
+
+		for( int i = 0; i < 3; i++ ) {
+			int ret = tmpVector.append( &email );
+			if( 0 != ret ) {
+				printf( "#%d append %d\n", i, ret );
+			}
+		}
+
+		printf( "count %d\n", tmpVector.getCount() );
+	}
+}
+
 int main( int argc, char * argv[] )
 {
 	if( argc < 2 ) {
@@ -219,7 +377,7 @@ int main( int argc, char * argv[] )
 
 	int type = atoi( argv[1] );
 
-	SP_DPMetaUtils::dump( gXYZAddrbookMetaInfo );
+	//SP_DPMetaUtils::dump( gXYZAddrbookMetaInfo );
 
 	XYZAddrbookPickle xmlPickle( SP_DataPickle::eXml );
 	XYZAddrbookPickle xmlRpcPickle( SP_DataPickle::eXmlRpc );
@@ -231,6 +389,7 @@ int main( int argc, char * argv[] )
 	if( 2 == type ) pickle = &jsonPickle;
 	if( 3 == type ) pickle = &pbPickle;
 
+#if 0
 	testEmail( pickle );
 
 	testPhoneNumber( pickle );
@@ -240,6 +399,9 @@ int main( int argc, char * argv[] )
 	testUnpickle( pickle );
 
 	testDeepCopy();
+#endif
+
+	testVector();
 
 	return 0;
 }

@@ -9,7 +9,7 @@
 #include <sys/stat.h>
 #include <assert.h>
 
-#include "dp_xyzbenchmark.hpp"
+#include "dp_xyzbenchmarkstruct.hpp"
 
 #include "spdpmetautils.hpp"
 #include "spxmlpickle.hpp"

@@ -28,6 +28,10 @@ private:
 
 	void generateAccessorDecl( SP_DPSyntaxField * field, FILE * writer );
 
+	void generateFake( const char * pickleName,
+			SP_DPSyntaxTree * syntaxTree,
+			SP_DPSyntaxStruct * structure, FILE * writer );
+
 	void generateImpl( const char * pickleName,
 			SP_DPSyntaxStruct * structure, FILE * writer );
 
@@ -35,6 +39,7 @@ private:
 			SP_DPSyntaxStruct * structure, FILE * writer );
 
 	void generateAccessorImpl( const char * className,
+			SP_DPSyntaxStruct * structure,
 			SP_DPSyntaxField * field, FILE * writer );
 
 private:

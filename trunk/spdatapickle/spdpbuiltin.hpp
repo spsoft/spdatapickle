@@ -5,10 +5,11 @@
 
 */
 
-#ifndef __dp_sp_dpbuiltin_hpp__
-#define __dp_sp_dpbuiltin_hpp__
+#pragma once
 
-#include "spdatapickle/spdplib.hpp"
+#include <stdint.h>
+
+#include "spdpmetainfo.hpp"
 
 #ifdef __cplusplus
 extern "C" {
@@ -238,7 +239,5 @@ private:
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif
 

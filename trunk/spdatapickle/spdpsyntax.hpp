@@ -17,8 +17,11 @@ public:
 	void setName( const char * name );
 	const char * getName() const;
 
+	const char * getInitalName() const;
+
 private:
 	char mName[ 128 ];
+	char mInitalName[ 128 ];
 };
 
 class SP_DPSyntaxField : public SP_DPSyntaxNode
@@ -65,6 +68,8 @@ public:
 	~SP_DPSyntaxStruct();
 
 	SP_DPSyntaxFieldVector * getFieldList();
+
+	SP_DPSyntaxField * findField( const char * name );
 
 private:
 	SP_DPSyntaxFieldVector mFieldList;

@@ -33,6 +33,11 @@ void SP_DPClassCodeRender :: generateHeader( SP_DPSyntaxTree * syntaxTree, FILE 
 	}
 
 	{
+		fprintf( writer, "#include \"spdplib.hpp\"\n" );
+		fprintf( writer, "\n" );
+	}
+
+	{
 		SP_DPSyntaxStructVector * slist = syntaxTree->getStructList();
 
 		SP_DPSyntaxStructVector::iterator sit = slist->begin();
@@ -51,11 +56,12 @@ void SP_DPClassCodeRender :: generateHeader( SP_DPSyntaxTree * syntaxTree, FILE 
 
 void SP_DPClassCodeRender :: generateDecl( SP_DPSyntaxStruct * structure, FILE * writer )
 {
-	char className[ 128 ] = { 0 };
+	char className[ 128 ] = { 0 }, fakeName[ 128 ] = { 0 };
 
 	mNameRender->getStructBaseName( structure->getName(), className, sizeof( className ) );
+	mNameRender->getStructFakeName( structure->getName(), fakeName, sizeof( fakeName ) );
 
-	fprintf( writer, "typedef struct tag%s %s_t;\n\n", className, className );
+	fprintf( writer, "typedef struct tag%s %s_t;\n\n", fakeName, fakeName );
 
 	fprintf( writer, "class %s {\n", className );
 	fprintf( writer, "public:\n" );
@@ -76,30 +82,37 @@ void SP_DPClassCodeRender :: generateDecl( SP_DPSyntaxStruct * structure, FILE *
 	}
 
 	fprintf( writer, "private:\n" );
-	fprintf( writer, "\t%s_t * mImpl;\n", className );
+	fprintf( writer, "\tvoid clearImpl();\n\n" );
+	fprintf( writer, "\tvoid clearFake();\n\n" );
+	fprintf( writer, "\t%s_t * mFake;\n", fakeName );
 	fprintf( writer, "};\n" );
+
+	fprintf( writer, "\n" );
+
+	fprintf( writer, "typedef SP_DPVector< %s_t, %s > %s_Fake_Vector;\n",
+			className, className, className );
 
 	fprintf( writer, "\n" );
 }
 
 void SP_DPClassCodeRender :: generateAccessorDecl( SP_DPSyntaxField * field, FILE * writer )
 {
-	char typeName[ 128 ] = { 0 }, fieldName[ 128 ] = { 0 };
+	char typeName[ 128 ] = { 0 }, fieldName[ 128 ] = { 0 }, paramName[ 128 ] = { 0 };
 
 	mNameRender->getTypeName(field->getType(), typeName, sizeof(typeName));
 	mNameRender->getFieldName(field->getName(), fieldName, sizeof(fieldName));
+	mNameRender->getParamName(field->getName(), paramName, sizeof( paramName ) );
 
 	if( field->getArraySize() > 0 ) {
-		fprintf( writer, "\tvoid set%s( const %s * %s );\n", field->getName(), typeName, fieldName );
-		fprintf( writer, "\tconst %s * get%s() const;\n", typeName, field->getName() );
+		fprintf( writer, "\t%s * get%s() const;\n", typeName, field->getInitalName() );
 	} else {
 		if( mNameRender->isBaseType( field->getType() ) )
 		{
-			fprintf( writer, "\tvoid set%s( const %s %s );\n", field->getName(), typeName, fieldName );
+			fprintf( writer, "\tvoid set%s( const %s %s );\n", field->getInitalName(), typeName, paramName );
 			fprintf( writer, "\tconst %s get%s() const;\n", typeName, field->getName() );
 		} else {
-			fprintf( writer, "\tvoid set%s( const %s & %s );\n", field->getName(), typeName, fieldName );
-			fprintf( writer, "\tconst %s * get%s() const;\n", typeName, field->getName() );
+			fprintf( writer, "\tvoid set%s( const %s & %s );\n", field->getInitalName(), typeName, paramName );
+			fprintf( writer, "\tconst %s * get%s() const;\n", typeName, field->getInitalName() );
 		}
 	}
 }
@@ -134,6 +147,7 @@ void SP_DPClassCodeRender :: generateCpp( SP_DPSyntaxTree * syntaxTree, FILE * w
 		SP_DPSyntaxStructVector::iterator sit = slist->begin();
 
 		for( ; slist->end() != sit; ++sit ) {
+			generateFake( pickleName, syntaxTree, &(*sit), writer );
 			generateImpl( pickleName, &(*sit), writer );
 
 			fprintf( writer, "//============================================================\n\n" );
@@ -143,26 +157,88 @@ void SP_DPClassCodeRender :: generateCpp( SP_DPSyntaxTree * syntaxTree, FILE * w
 	}
 }
 
+void SP_DPClassCodeRender :: generateFake( const char * pickleName,
+		SP_DPSyntaxTree * syntaxTree, SP_DPSyntaxStruct * structure, FILE * writer )
+{
+	char className[ 128 ] = { 0 }, fakeName[ 128 ] = { 0 };
+	mNameRender->getStructBaseName( structure->getName(), className, sizeof( className ) );
+	mNameRender->getStructFakeName( structure->getName(), fakeName, sizeof( fakeName ) );
+
+	fprintf( writer, "\n" );
+	fprintf( writer, "typedef struct tag%s {\n", fakeName );
+	fprintf( writer, "\t%s_t * mImpl;\n", className );
+	fprintf( writer, "\tint mIsOwner;\n" );
+
+	SP_DPSyntaxFieldVector * flist = structure->getFieldList();
+
+	SP_DPSyntaxFieldVector::iterator fit = flist->begin();
+
+	for( ; flist->end() != fit; ++fit ) {
+		if( ! mNameRender->isBaseType( fit->getType() ) ) {
+			char typeName[ 128 ] = { 0 }, fieldName[ 128 ] = { 0 };
+
+			mNameRender->getStructBaseName( fit->getType(), typeName, sizeof(typeName) );
+			mNameRender->getFieldName( fit->getName(), fieldName, sizeof(fieldName) );
+
+			if( fit->isPtr() ) {
+				fprintf( writer, "\t%s_Fake_Vector * %s;\n", typeName, fieldName );
+			} else {
+				fprintf( writer, "\t%s * %s;\n", typeName, fieldName );
+			}
+		}
+	}
+
+	fprintf( writer, "} %s_t;\n", fakeName );
+	fprintf( writer, "\n" );
+}
+
 void SP_DPClassCodeRender :: generateImpl( const char * pickleName, SP_DPSyntaxStruct * structure, FILE * writer )
 {
-	char className[ 128 ] = { 0 };
+	char className[ 128 ] = { 0 }, fakeName[ 128 ] = { 0 };
 	mNameRender->getStructBaseName( structure->getName(), className, sizeof( className ) );
+	mNameRender->getStructFakeName( structure->getName(), fakeName, sizeof( fakeName ) );
 
 	fprintf( writer, "%s :: %s()\n", className, className );
 	fprintf( writer, "{\n" );
-	fprintf( writer, "\tmImpl = (%s_t*)calloc( sizeof( %s_t ), 1 );\n", className, className );
+	fprintf( writer, "\tmFake = (%s_t*)calloc( sizeof( %s_t ), 1 );\n", fakeName, fakeName );
+	fprintf( writer, "\tmFake->mIsOwner = 1;\n" );
+	fprintf( writer, "\tmFake->mImpl = (%s_t*)calloc( sizeof( %s_t ), 1 );\n", className, className );
 	fprintf( writer, "}\n\n" );
 
 	fprintf( writer, "%s :: ~%s()\n", className, className );
 	fprintf( writer, "{\n" );
-	fprintf( writer, "\t%s::freeFields( *mImpl );\n", pickleName );
-	fprintf( writer, "\tfree( mImpl );\n" );
-	fprintf( writer, "\tmImpl = NULL;\n" );
+	fprintf( writer, "\tif( mFake->mIsOwner ) clearImpl();\n" );
+	fprintf( writer, "\tclearFake();\n\n" );
+	fprintf( writer, "\tfree( mFake );\n" );
+	fprintf( writer, "\tmFake = NULL;\n" );
+	fprintf( writer, "}\n\n" );
+
+	fprintf( writer, "void %s :: clearImpl()\n", className );
+	fprintf( writer, "{\n" );
+	fprintf( writer, "\t%s::freeFields( * ( mFake->mImpl ) );\n", pickleName );
+	fprintf( writer, "\tfree( mFake->mImpl );\n" );
+	fprintf( writer, "\tmFake->mImpl = NULL;\n" );
+	fprintf( writer, "}\n\n" );
+
+	fprintf( writer, "void %s :: clearFake()\n", className );
+	fprintf( writer, "{\n" );
+	{
+		SP_DPSyntaxFieldVector * flist = structure->getFieldList();
+		SP_DPSyntaxFieldVector::iterator fit = flist->begin();
+		for( ; flist->end() != fit; ++fit ) {
+			if( ! mNameRender->isBaseType( fit->getType() ) ) {
+				char fieldName[ 128 ] = { 0 };
+				mNameRender->getFieldName( fit->getName(), fieldName, sizeof(fieldName) );
+				fprintf( writer, "\tif( mFake->%s ) delete mFake->%s, mFake->%s = NULL;\n",
+						fieldName, fieldName, fieldName );
+			}
+		}
+	}
 	fprintf( writer, "}\n\n" );
 
 	fprintf( writer, "%s :: %s( const %s & other )\n", className, className, className );
 	fprintf( writer, "{\n" );
-	fprintf( writer, "\tmImpl = NULL;\n" );
+	fprintf( writer, "\tmFake = NULL;\n" );
 	fprintf( writer, "\toperator=( other );\n" );
 	fprintf( writer, "}\n\n" );
 
@@ -170,7 +246,7 @@ void SP_DPClassCodeRender :: generateImpl( const char * pickleName, SP_DPSyntaxS
 
 	fprintf( writer, "%s_t * %s :: getImpl() const\n", className, className );
 	fprintf( writer, "{\n" );
-	fprintf( writer, "\treturn mImpl;\n" );
+	fprintf( writer, "\treturn mFake->mImpl;\n" );
 	fprintf( writer, "}\n\n" );
 
 	SP_DPSyntaxFieldVector * flist = structure->getFieldList();
@@ -178,82 +254,105 @@ void SP_DPClassCodeRender :: generateImpl( const char * pickleName, SP_DPSyntaxS
 	SP_DPSyntaxFieldVector::iterator fit = flist->begin();
 
 	for( ; flist->end() != fit; ++fit ) {
-		generateAccessorImpl( className, &(*fit), writer );
+		generateAccessorImpl( className, structure, &(*fit), writer );
 	}
 }
 
 void SP_DPClassCodeRender :: generateEval( const char * pickleName, SP_DPSyntaxStruct * structure, FILE * writer )
 {
-	char className[ 128 ] = { 0 };
+	char className[ 128 ] = { 0 }, fakeName[ 128 ] = { 0 };
 	mNameRender->getStructBaseName( structure->getName(), className, sizeof( className ) );
+	mNameRender->getStructFakeName( structure->getName(), fakeName, sizeof( fakeName ) );
 
 	fprintf( writer, "%s & %s :: operator=( const %s & other )\n", className, className, className );
 	fprintf( writer, "{\n" );
-	fprintf( writer, "\tif( NULL != mImpl )\n" );
+	fprintf( writer, "\tif( NULL != mFake )\n" );
 	fprintf( writer, "\t{\n" );
-	fprintf( writer, "\t\t%s::freeFields( *mImpl );\n", pickleName );
-	fprintf( writer, "\t\tfree( mImpl );\n" );
-	fprintf( writer, "\t\tmImpl = NULL;\n" );
-	fprintf( writer, "\t}\n\n" );
-	fprintf( writer, "\tmImpl = (%s_t*)calloc( sizeof( %s_t ), 1 );\n\n", className, className );
-	fprintf( writer, "\t%s::deepCopy( mImpl, other.mImpl );\n", pickleName );
+	fprintf( writer, "\t\tclearImpl();\n" );
+	fprintf( writer, "\t\tclearFake();\n" );
+	fprintf( writer, "\t} else {\n" );
+	fprintf( writer, "\t\tmFake = (%s_t*)calloc( sizeof( %s_t ), 1 );\n", fakeName, fakeName );
+	fprintf( writer, "\t\tmFake->mIsOwner = 1;\n" );
+	fprintf( writer, "\t}\n" );
+	fprintf( writer, "\tmFake->mImpl = (%s_t*)calloc( sizeof( %s_t ), 1 );\n", className, className );
+	fprintf( writer, "\t%s::deepCopy( mFake->mImpl, other.mFake->mImpl );\n", pickleName );
 	fprintf( writer, "\n" );
 	fprintf( writer, "\treturn *this;\n" );
 	fprintf( writer, "}\n\n" );
 }
 
 void SP_DPClassCodeRender :: generateAccessorImpl( const char * className,
-		SP_DPSyntaxField * field, FILE * writer )
+		SP_DPSyntaxStruct * structure, SP_DPSyntaxField * field, FILE * writer )
 {
-	char typeName[ 128 ] = { 0 }, fieldName[ 128 ] = { 0 };
+	char typeName[ 128 ] = { 0 }, fieldName[ 128 ] = { 0 }, structName[ 128 ] = { 0 };
+	char paramName[ 128 ] = { 0 };
 
 	mNameRender->getTypeName(field->getType(), typeName, sizeof(typeName));
 	mNameRender->getFieldName(field->getName(), fieldName, sizeof(fieldName));
+	mNameRender->getStructBaseName( field->getType(), structName, sizeof( structName ) );
+	mNameRender->getParamName( field->getName(), paramName, sizeof( paramName ) );
 
-	if( field->getArraySize() > 0 ) {
-		fprintf( writer, "void %s :: set%s( const %s * %s )\n",
-				className, field->getName(), typeName, fieldName );
-		fprintf( writer, "{\n" );
-		if( strstr( field->getType(), "char" ) ) {
-			fprintf( writer, "\tstrncpy( mImpl->%s, %s, sizeof( mImpl->%s ) - 1 );\n",
-					fieldName, fieldName, fieldName );
+	if( mNameRender->isBaseType( field->getType() ) ) {
+		if( field->getArraySize() > 0 ) {
+			fprintf( writer, "%s * %s :: get%s() const\n", typeName, className, field->getInitalName() );
+			fprintf( writer, "{\n" );
+			fprintf( writer, "\treturn mFake->mImpl->%s;\n", fieldName );
+			fprintf( writer, "}\n\n" );
 		} else {
-			fprintf( writer, "\tmImpl->%s = %s;\n", fieldName, fieldName );
-		}
-		fprintf( writer, "}\n\n" );
-		fprintf( writer, "const %s * %s :: get%s() const\n", typeName, className, field->getName() );
-		fprintf( writer, "{\n" );
-		fprintf( writer, "\treturn mImpl->%s;\n", fieldName );
-		fprintf( writer, "}\n\n" );
-	} else {
-		if( mNameRender->isBaseType( field->getType() ) ) {
 			fprintf( writer, "void %s :: set%s( const %s %s )\n",
-					className, field->getName(), typeName, fieldName );
+					className, field->getInitalName(), typeName, paramName );
 			fprintf( writer, "{\n" );
 			if( '*' == *( field->getType() ) && strstr( field->getType(), "char" ) ) {
-				fprintf( writer, "\tif( mImpl->%s ) free( mImpl->%s );\n", fieldName, fieldName );
-				fprintf( writer, "\tmImpl->%s = NULL;\n", fieldName );
-				fprintf( writer, "\tif( %s ) mImpl->%s = strdup( %s );\n", fieldName, fieldName, fieldName );
+				fprintf( writer, "\tif( mFake->mImpl->%s ) free( mFake->mImpl->%s );\n", fieldName, fieldName );
+				fprintf( writer, "\tmFake->mImpl->%s = NULL;\n", fieldName );
+				fprintf( writer, "\tif( %s ) mFake->mImpl->%s = strdup( %s );\n", paramName, fieldName, paramName );
 			} else {
-				fprintf( writer, "\tmImpl->%s = %s;\n", fieldName, fieldName );
+				fprintf( writer, "\tmFake->mImpl->%s = %s;\n", fieldName, paramName );
 			}
 			fprintf( writer, "}\n\n" );
 
-			fprintf( writer, "const %s %s :: get%s() const\n", typeName, className, field->getName() );
+			fprintf( writer, "const %s %s :: get%s() const\n", typeName, className, field->getInitalName() );
 			fprintf( writer, "{\n" );
-			fprintf( writer, "\treturn mImpl->%s;\n", fieldName );
+			fprintf( writer, "\treturn mFake->mImpl->%s;\n", fieldName );
+			fprintf( writer, "}\n\n" );
+		}
+	} else {
+		if( field->isPtr() ) {
+			char countFieldName[ 128 ] = { 0 };
+			if( '\0' != * ( field->getReferTo() ) ) {
+				SP_DPSyntaxField * referTo = structure->findField( field->getReferTo() );
+				if( NULL != referTo ) {
+					mNameRender->getFieldName( referTo->getName(), countFieldName, sizeof( countFieldName ) );
+				}
+			}
+
+			fprintf( writer, "%s_Fake_Vector * %s :: get%s() const\n", structName, className, field->getInitalName() );
+			fprintf( writer, "{\n" );
+
+			fprintf( writer, "\tif( NULL != mFake->%s ) {\n", fieldName );
+			fprintf( writer, "\t\tmFake->%s =\n", fieldName );
+			fprintf( writer, "\t\t\tnew %s_Fake_Vector(\n", structName );
+
+			if( '\0' == countFieldName[0] ) {
+				fprintf( writer, "\t\t\t\t&( mFake->mImpl->%s ), NULL, %d );\n", fieldName, field->getArraySize() );
+			} else {
+				fprintf( writer, "\t\t\t\t&( mFake->mImpl->%s ), &( mFake->mImpl->%s ), %d );\n",
+					fieldName, countFieldName, field->getArraySize() );
+			}
+
+			fprintf( writer, "\t}\n" );
+
+			fprintf( writer, "\treturn &( mFake->mImpl->%s );\n", fieldName );
 			fprintf( writer, "}\n\n" );
 		} else {
-			fprintf( writer, "void %s :: set%s( const %s & %s )\n",
-					className, field->getName(), typeName, fieldName );
+			fprintf( writer, "%s * %s :: get%s() const\n", structName, className, field->getInitalName() );
 			fprintf( writer, "{\n" );
-			fprintf( writer, "\tmImpl->%s = %s;\n", fieldName, fieldName );
 
-			fprintf( writer, "}\n\n" );
+			fprintf( writer, "\tif( NULL != mFake->%s ) {\n", fieldName );
+			fprintf( writer, "\t\tmFake->%s = new %s( &( mFake->mImpl->%s ) );\n", fieldName, structName, fieldName );
+			fprintf( writer, "\t}\n" );
 
-			fprintf( writer, "const %s * %s :: get%s() const\n", typeName, className, field->getName() );
-			fprintf( writer, "{\n" );
-			fprintf( writer, "\treturn &( mImpl->%s );\n", fieldName );
+			fprintf( writer, "\treturn &( mFake->mImpl->%s );\n", fieldName );
 			fprintf( writer, "}\n\n" );
 		}
 	}
