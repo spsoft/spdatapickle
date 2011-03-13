@@ -30,7 +30,11 @@ public:
 
 	virtual const char * getFieldName( const char * name, char * fieldName, int size );
 
+	virtual const char * getParamName( const char * name, char * paramName, int size );
+
 	virtual const char * getStructBaseName( const char * name, char * structName, int size );
+
+	virtual const char * getStructFakeName( const char * name, char * structName, int size );
 
 	virtual const char * getMetaInfoName( const char * name, char * metaName, int size );
 

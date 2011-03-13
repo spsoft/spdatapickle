@@ -13,6 +13,7 @@
 SP_DPSyntaxNode :: SP_DPSyntaxNode()
 {
 	SP_DP_MEMSET(mName);
+	SP_DP_MEMSET(mInitalName);
 }
 
 SP_DPSyntaxNode :: ~SP_DPSyntaxNode()
@@ -22,11 +23,19 @@ SP_DPSyntaxNode :: ~SP_DPSyntaxNode()
 void SP_DPSyntaxNode :: setName( const char * name )
 {
 	SP_DP_STRCPY( mName, name );
+	SP_DP_STRCPY( mInitalName, name );
+
+	mInitalName[0] = toupper( mInitalName[0] );
 }
 
 const char * SP_DPSyntaxNode :: getName() const
 {
 	return mName;
+}
+
+const char * SP_DPSyntaxNode :: getInitalName() const
+{
+	return mInitalName;
 }
 
 //=========================================================
@@ -124,6 +133,21 @@ SP_DPSyntaxStruct :: ~SP_DPSyntaxStruct()
 SP_DPSyntaxFieldVector * SP_DPSyntaxStruct :: getFieldList()
 {
 	return &mFieldList;
+}
+
+SP_DPSyntaxField * SP_DPSyntaxStruct :: findField( const char * name )
+{
+	SP_DPSyntaxField * ret = NULL;
+
+	SP_DPSyntaxFieldVector::iterator iter = mFieldList.begin();
+
+	for( ; mFieldList.end() != iter; ++iter ) {
+		if( 0 == strcmp( name, iter->getName() ) ) {
+			ret = &(*iter);
+		}
+	}
+
+	return ret;
 }
 
 //=========================================================
